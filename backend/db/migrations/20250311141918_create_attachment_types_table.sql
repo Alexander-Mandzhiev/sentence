@@ -1,10 +1,9 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE attachment_types (
-                                  id SERIAL PRIMARY KEY,
-                                  name VARCHAR(50) NOT NULL UNIQUE,
-                                  description TEXT,
-                                  is_active BOOLEAN DEFAULT TRUE
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
 );
 -- +goose StatementEnd
 

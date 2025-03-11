@@ -1,14 +1,14 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE directions (
+CREATE TABLE implementors (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    description TEXT,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) UNIQUE,
     is_active BOOLEAN DEFAULT TRUE
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE directions;
+DROP TABLE implementors;
 -- +goose StatementEnd
