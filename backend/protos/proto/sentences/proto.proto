@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package sentences_provider;
+option go_package = "sentences_ppu.v1;sentences";
+
+service SentencesProvider {
+  rpc Create(CreateSentenceRequest) returns (SentenceResponse);
+  rpc Get(GetSentenceRequest) returns (SentenceResponse);
+  rpc Update(UpdateSentenceRequest) returns (SentenceResponse);
+  rpc Delete(DeleteSentenceRequest) returns (DeleteSentenceResponse);
+  rpc List(ListSentencesRequest) returns (SentencesListResponse);
+}
+
+message CreateSentenceRequest {
+  int32 status_id = 1;         // ID статуса (обязательное)
+  string name = 2;             // Имя пользователя (обязательное)
+  string phone = 3;            // Телефон пользователя (необязательное)
+  int32 department_id = 4;      // ID отдела (опционально)
+  string problem = 5;          // Описание проблемы (необязательное)
+  string solution = 6;         // Решение проблемы (необязательное)
+  int32 direction_id = 7;      // ID направления (обязательное)
+  int32 implementor_id = 8;    // ID исполнителя (опционально)
+  int32 priority_id = 9;       // ID приоритета (обязательное)
+  int32 encouragement = 10;     // Поощрение (необязательное)
+}
+
+message GetSentenceRequest {
+  int64 id = 1;
+}
+
+message UpdateSentenceRequest {
+  int64 id = 1;
+  int32 status_id = 2;
+  string name = 3;
+  string phone = 4;
+  int32 department_id = 5;
+  string problem = 6;
+  string solution = 7;
+  int32 direction_id = 8;
+  int32 implementor_id = 9;
+  int32 priority_id = 10;
+  int32 encouragement = 11;
+}
+
+message SentenceResponse {
+  int64 id = 1;
+  int32 status_id = 2;
+  string name = 3;
+  string phone = 4;
+  int32 department_id = 5;
+  string problem = 6;
+  string solution = 7;
+  string created_at = 8;
+  int32 direction_id = 9;
+  int32 implementor_id = 10;
+  int32 priority_id = 11;
+  int32 encouragement = 12;
+}
+
+message DeleteSentenceRequest {
+  int64 id = 1;
+}
+message DeleteSentenceResponse {
+  bool success = 1;
+}
+
+message ListSentencesRequest {}
+message SentencesListResponse {
+  repeated SentenceResponse data = 1;
+}

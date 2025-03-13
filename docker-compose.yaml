@@ -1,9 +1,9 @@
 services:
   postgres:
     container_name: postgres
-    image: postgres:15
+    image: postgres
     environment:
-      POSTGRES_DB: sentence
+      POSTGRES_DB:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     volumes:

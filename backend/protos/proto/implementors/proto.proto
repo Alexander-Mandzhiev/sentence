@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package implementors_provider;
+option go_package = "implementors_ppu.v1;implementors";
+
+service ImplementorsProvider {
+  rpc Create(CreateImplementorRequest) returns (ImplementorResponse);
+  rpc Get(GetImplementorRequest) returns (ImplementorResponse);
+  rpc Update(UpdateImplementorRequest) returns (ImplementorResponse);
+  rpc Delete(DeleteImplementorRequest) returns (DeleteImplementorResponse);
+  rpc List(ListImplementorsRequest) returns (ImplementorsListResponse);
+}
+
+message CreateImplementorRequest {
+  string name = 1;
+  string email = 2;
+  bool is_active = 3;
+}
+
+message GetImplementorRequest {
+  int32 id = 1;
+}
+
+message UpdateImplementorRequest {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  bool is_active = 4;
+}
+
+message ImplementorResponse {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  bool is_active = 4;
+}
+
+message DeleteImplementorRequest {
+  int32 id = 1;
+}
+message DeleteImplementorResponse {
+  bool success = 1;
+}
+
+message ListImplementorsRequest {}
+message ImplementorsListResponse {
+  repeated ImplementorResponse data = 1;
+}

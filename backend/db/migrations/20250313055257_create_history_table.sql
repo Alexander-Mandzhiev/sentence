@@ -4,7 +4,7 @@ CREATE TABLE history (
     id SERIAL PRIMARY KEY,
     sentence_id BIGINT NOT NULL REFERENCES sentences(id) ON DELETE CASCADE,
     status_id INT NOT NULL REFERENCES statuses(id) ON DELETE SET NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Время создания записи об изменении статуса
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     reason TEXT,
     details TEXT
 );

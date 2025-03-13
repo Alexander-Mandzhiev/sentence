@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package priorities_provider;
+option go_package = "priorities_ppu.v1;priorities";
+
+service PrioritiesProvider {
+  rpc Create(CreatePrioritiesRequest) returns (PrioritiesResponse);
+  rpc Get(GetPrioritiesRequest) returns (PrioritiesResponse);
+  rpc Update(UpdatePrioritiesRequest) returns (PrioritiesResponse);
+  rpc Delete(DeletePrioritiesRequest) returns (DeletePrioritiesResponse);
+  rpc List(ListPrioritiesRequest) returns (PrioritiesListResponse);
+}
+
+message CreatePrioritiesRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message GetPrioritiesRequest {
+  int32 id = 1;
+}
+
+message UpdatePrioritiesRequest {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message PrioritiesResponse {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message DeletePrioritiesRequest {
+  int32 id = 1;
+}
+message DeletePrioritiesResponse {
+  bool success = 1;
+}
+
+message ListPrioritiesRequest {}
+message PrioritiesListResponse {
+  repeated PrioritiesResponse data = 1;
+}

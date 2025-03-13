@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package history_provider;
+option go_package = "history_ppu.v1;history";
+
+service HistoryProvider {
+  rpc Create(CreateHistoryRequest) returns (HistoryResponse);
+  rpc Get(GetHistoryRequest) returns (HistoryResponse);
+  rpc ListBySentence(ListBySentenceRequest) returns (HistoryListResponse);
+}
+
+message CreateHistoryRequest {
+  int64 sentence_id = 1;
+  int32 status_id = 2;
+  string reason = 3;
+  string details = 4;
+}
+
+message GetHistoryRequest {
+  int32 id = 1;
+}
+message HistoryResponse {
+  int32 id = 1;                // ID записи в истории
+  int64 sentence_id = 2;       // ID предложения
+  int32 status_id = 3;         // ID статуса
+  string created_at = 4;       // Дата создания (формат ISO 8601)
+  string reason = 5;           // Причина изменения
+  string details = 6;          // Дополнительные детали
+}
+
+message ListBySentenceRequest {
+  int64 sentence_id = 1;
+}
+message HistoryListResponse {
+  repeated HistoryResponse data = 1;
+}

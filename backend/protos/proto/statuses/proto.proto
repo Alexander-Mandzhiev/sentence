@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package status_provider;
+option go_package = "statuses_ppu.v1;statuses";
+
+service StatusProvider {
+  rpc Create(CreateStatusRequest) returns (StatusResponse);
+  rpc Status(GetStatusRequest) returns (StatusResponse);
+  rpc Update(UpdateStatusRequest) returns (StatusResponse);
+  rpc Delete(DeleteStatusRequest) returns (DeleteStatusResponse);
+  rpc List(ListStatusesRequest) returns (StatusListResponse);
+}
+
+message CreateStatusRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message GetStatusRequest {
+  int32 id = 1;
+}
+
+message UpdateStatusRequest {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message StatusResponse {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message DeleteStatusRequest {
+  int32 id = 1;
+}
+message DeleteStatusResponse {
+  bool success = 1;
+}
+
+message ListStatusesRequest {}
+message StatusListResponse {
+  repeated StatusResponse data = 1;
+}

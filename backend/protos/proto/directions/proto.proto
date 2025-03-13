@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package directions_provider;
+option go_package = "directions_ppu.v1;directions";
+
+service DirectionsProvider {
+  rpc Create(CreateDirectionRequest) returns (DirectionResponse);
+  rpc Get(GetDirectionRequest) returns (DirectionResponse);
+  rpc Update(UpdateDirectionRequest) returns (DirectionResponse);
+  rpc Delete(DeleteDirectionRequest) returns (DeleteDirectionResponse);
+  rpc List(ListDirectionsRequest) returns (DirectionsListResponse);
+}
+
+message CreateDirectionRequest {
+  string name = 1;
+  string description = 2;
+  bool is_active = 3;
+}
+
+message GetDirectionRequest {
+  int32 id = 1;
+}
+
+message UpdateDirectionRequest {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_active = 4;
+}
+
+message DirectionResponse {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_active = 4;
+}
+
+message DeleteDirectionRequest {
+  int32 id = 1;
+}
+message DeleteDirectionResponse {
+  bool success = 1;
+}
+
+message ListDirectionsRequest {}
+message DirectionsListResponse {
+  repeated DirectionResponse data = 1;
+}

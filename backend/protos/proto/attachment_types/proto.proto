@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package attachment_types_provider;
+option go_package = "attachment_types_ppu.v1;attachment_types";
+
+service AttachmentTypesProvider {
+  rpc Create(CreateAttachmentTypeRequest) returns (AttachmentTypeResponse);
+  rpc Get(GetAttachmentTypeRequest) returns (AttachmentTypeResponse);
+  rpc Update(UpdateAttachmentTypeRequest) returns (AttachmentTypeResponse);
+  rpc Delete(DeleteAttachmentTypeRequest) returns (DeleteAttachmentTypeResponse);
+  rpc List(ListAttachmentTypesRequest) returns (AttachmentTypesListResponse);
+}
+
+message CreateAttachmentTypeRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message GetAttachmentTypeRequest {
+  int32 id = 1;
+}
+
+message UpdateAttachmentTypeRequest {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message AttachmentTypeResponse {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message DeleteAttachmentTypeRequest {
+  int32 id = 1;
+}
+
+message DeleteAttachmentTypeResponse {
+  bool success = 1;
+}
+
+message ListAttachmentTypesRequest {}
+message AttachmentTypesListResponse {
+  repeated AttachmentTypeResponse data = 1;
+}

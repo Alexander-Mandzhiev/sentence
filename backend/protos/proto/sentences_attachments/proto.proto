@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package sentences_attachments_provider;
+option go_package = "sentences_attachments_ppu.v1;sentences_attachments";
+
+service SentencesAttachmentsProvider {
+  rpc Create(CreateSentenceAttachmentRequest) returns (SentenceAttachmentResponse);
+  rpc Delete(DeleteSentenceAttachmentRequest) returns (DeleteSentenceAttachmentResponse);
+  rpc ListBySentence(ListBySentenceRequest) returns (SentenceAttachmentsListResponse);
+  rpc ListByAttachment(ListByAttachmentRequest) returns (SentenceAttachmentsListResponse);
+}
+
+message CreateSentenceAttachmentRequest {
+  int64 sentence_id = 1;
+  int32 attachment_id = 2;
+}
+
+message SentenceAttachmentResponse {
+  int64 sentence_id = 1;
+  int32 attachment_id = 2;
+}
+
+message DeleteSentenceAttachmentRequest {
+  int64 sentence_id = 1;
+  int32 attachment_id = 2;
+}
+
+message DeleteSentenceAttachmentResponse {
+  bool success = 1;
+}
+message ListBySentenceRequest {
+  int64 sentence_id = 1;
+}
+
+message ListByAttachmentRequest {
+  int32 attachment_id = 1;
+}
+message SentenceAttachmentsListResponse {
+  repeated SentenceAttachmentResponse data = 1;
+}
