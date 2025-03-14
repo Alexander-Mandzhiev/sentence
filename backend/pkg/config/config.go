@@ -34,8 +34,6 @@ type PostgreSQLConfig struct {
 	ConnMaxLifetime    time.Duration `yaml:"conn_max_lifetime" env:"POSTGRES_CONN_MAX_LIFETIME" env-default:"5m"`
 }
 
-var Cfg *Config
-
 func Initialize() *Config {
 	return MustLoad()
 }
