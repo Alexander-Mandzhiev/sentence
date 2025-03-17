@@ -48,7 +48,6 @@ func InterceptorLogger(l *slog.Logger) logging.Logger {
 func (a *App) MustRun(logger *slog.Logger, port int) {
 	if err := a.Run(port); err != nil {
 		logger.Error("Failed to start GRPC server", slog.Any("error", err))
-		panic(err)
 	}
 }
 
@@ -63,8 +62,13 @@ func (a *App) Run(port int) error {
 	slog.Info("gRPC server started", slog.String("addr", listener.Addr().String()))
 
 	if err = a.GRPCServer.Serve(listener); err != nil {
+		if err == grpc.ErrServerStopped || err.Error() == "use of closed network connection" {
+			slog.Info("gRPC server stopped gracefully")
+			return nil
+		}
 		return fmt.Errorf("%s: %w", op, err)
 	}
+
 	return nil
 }
 

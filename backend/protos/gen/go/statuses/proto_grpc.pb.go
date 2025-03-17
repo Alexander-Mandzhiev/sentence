@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	StatusProvider_Create_FullMethodName = "/status_provider.StatusProvider/Create"
-	StatusProvider_Status_FullMethodName = "/status_provider.StatusProvider/Status"
+	StatusProvider_Get_FullMethodName    = "/status_provider.StatusProvider/Get"
 	StatusProvider_Update_FullMethodName = "/status_provider.StatusProvider/Update"
 	StatusProvider_Delete_FullMethodName = "/status_provider.StatusProvider/Delete"
 	StatusProvider_List_FullMethodName   = "/status_provider.StatusProvider/List"
@@ -31,7 +31,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StatusProviderClient interface {
 	Create(ctx context.Context, in *CreateStatusRequest, opts ...grpc.CallOption) (*StatusResponse, error)
-	Status(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	Get(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Update(ctx context.Context, in *UpdateStatusRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Delete(ctx context.Context, in *DeleteStatusRequest, opts ...grpc.CallOption) (*DeleteStatusResponse, error)
 	List(ctx context.Context, in *ListStatusesRequest, opts ...grpc.CallOption) (*StatusListResponse, error)
@@ -55,10 +55,10 @@ func (c *statusProviderClient) Create(ctx context.Context, in *CreateStatusReque
 	return out, nil
 }
 
-func (c *statusProviderClient) Status(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+func (c *statusProviderClient) Get(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StatusResponse)
-	err := c.cc.Invoke(ctx, StatusProvider_Status_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StatusProvider_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (c *statusProviderClient) List(ctx context.Context, in *ListStatusesRequest
 // for forward compatibility.
 type StatusProviderServer interface {
 	Create(context.Context, *CreateStatusRequest) (*StatusResponse, error)
-	Status(context.Context, *GetStatusRequest) (*StatusResponse, error)
+	Get(context.Context, *GetStatusRequest) (*StatusResponse, error)
 	Update(context.Context, *UpdateStatusRequest) (*StatusResponse, error)
 	Delete(context.Context, *DeleteStatusRequest) (*DeleteStatusResponse, error)
 	List(context.Context, *ListStatusesRequest) (*StatusListResponse, error)
@@ -117,8 +117,8 @@ type UnimplementedStatusProviderServer struct{}
 func (UnimplementedStatusProviderServer) Create(context.Context, *CreateStatusRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedStatusProviderServer) Status(context.Context, *GetStatusRequest) (*StatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
+func (UnimplementedStatusProviderServer) Get(context.Context, *GetStatusRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedStatusProviderServer) Update(context.Context, *UpdateStatusRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
@@ -168,20 +168,20 @@ func _StatusProvider_Create_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StatusProvider_Status_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StatusProvider_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StatusProviderServer).Status(ctx, in)
+		return srv.(StatusProviderServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StatusProvider_Status_FullMethodName,
+		FullMethod: StatusProvider_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StatusProviderServer).Status(ctx, req.(*GetStatusRequest))
+		return srv.(StatusProviderServer).Get(ctx, req.(*GetStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -252,8 +252,8 @@ var StatusProvider_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _StatusProvider_Create_Handler,
 		},
 		{
-			MethodName: "Status",
-			Handler:    _StatusProvider_Status_Handler,
+			MethodName: "Get",
+			Handler:    _StatusProvider_Get_Handler,
 		},
 		{
 			MethodName: "Update",

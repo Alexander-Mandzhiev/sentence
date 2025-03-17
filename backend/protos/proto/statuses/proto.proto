@@ -5,7 +5,7 @@ option go_package = "statuses_ppu.v1;statuses";
 
 service StatusProvider {
   rpc Create(CreateStatusRequest) returns (StatusResponse);
-  rpc Status(GetStatusRequest) returns (StatusResponse);
+  rpc Get(GetStatusRequest) returns (StatusResponse);
   rpc Update(UpdateStatusRequest) returns (StatusResponse);
   rpc Delete(DeleteStatusRequest) returns (DeleteStatusResponse);
   rpc List(ListStatusesRequest) returns (StatusListResponse);
