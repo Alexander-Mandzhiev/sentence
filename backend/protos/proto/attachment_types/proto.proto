@@ -6,7 +6,7 @@ option go_package = "attachment_types_ppu.v1;attachment_types";
 service AttachmentTypesProvider {
   rpc Create(CreateAttachmentTypeRequest) returns (AttachmentTypeResponse);
   rpc Get(GetAttachmentTypeRequest) returns (AttachmentTypeResponse);
-  rpc Update(UpdateAttachmentTypeRequest) returns (AttachmentTypeResponse);
+  rpc Update(AttachmentTypeResponse) returns (AttachmentTypeResponse);
   rpc Delete(DeleteAttachmentTypeRequest) returns (DeleteAttachmentTypeResponse);
   rpc List(ListAttachmentTypesRequest) returns (AttachmentTypesListResponse);
 }
@@ -20,11 +20,6 @@ message GetAttachmentTypeRequest {
   int32 id = 1;
 }
 
-message UpdateAttachmentTypeRequest {
-  int32 id = 1;
-  string name = 2;
-  string description = 3;
-}
 
 message AttachmentTypeResponse {
   int32 id = 1;

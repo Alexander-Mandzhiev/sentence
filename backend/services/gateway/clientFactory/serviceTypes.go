@@ -17,7 +17,7 @@ const (
 
 func (s ServiceType) String() string {
 	return [...]string{
-		"attachment_types",
+		"attachmentTypes",
 		"directions",
 		"history",
 		"attachments",

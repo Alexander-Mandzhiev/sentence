@@ -32,7 +32,7 @@ const (
 type DepartmentsProviderClient interface {
 	Create(ctx context.Context, in *CreateDepartmentRequest, opts ...grpc.CallOption) (*DepartmentResponse, error)
 	Get(ctx context.Context, in *GetDepartmentRequest, opts ...grpc.CallOption) (*DepartmentResponse, error)
-	Update(ctx context.Context, in *UpdateDepartmentRequest, opts ...grpc.CallOption) (*DepartmentResponse, error)
+	Update(ctx context.Context, in *DepartmentResponse, opts ...grpc.CallOption) (*DepartmentResponse, error)
 	Delete(ctx context.Context, in *DeleteDepartmentRequest, opts ...grpc.CallOption) (*DeleteDepartmentResponse, error)
 	List(ctx context.Context, in *ListDepartmentsRequest, opts ...grpc.CallOption) (*DepartmentsListResponse, error)
 }
@@ -65,7 +65,7 @@ func (c *departmentsProviderClient) Get(ctx context.Context, in *GetDepartmentRe
 	return out, nil
 }
 
-func (c *departmentsProviderClient) Update(ctx context.Context, in *UpdateDepartmentRequest, opts ...grpc.CallOption) (*DepartmentResponse, error) {
+func (c *departmentsProviderClient) Update(ctx context.Context, in *DepartmentResponse, opts ...grpc.CallOption) (*DepartmentResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DepartmentResponse)
 	err := c.cc.Invoke(ctx, DepartmentsProvider_Update_FullMethodName, in, out, cOpts...)
@@ -101,7 +101,7 @@ func (c *departmentsProviderClient) List(ctx context.Context, in *ListDepartment
 type DepartmentsProviderServer interface {
 	Create(context.Context, *CreateDepartmentRequest) (*DepartmentResponse, error)
 	Get(context.Context, *GetDepartmentRequest) (*DepartmentResponse, error)
-	Update(context.Context, *UpdateDepartmentRequest) (*DepartmentResponse, error)
+	Update(context.Context, *DepartmentResponse) (*DepartmentResponse, error)
 	Delete(context.Context, *DeleteDepartmentRequest) (*DeleteDepartmentResponse, error)
 	List(context.Context, *ListDepartmentsRequest) (*DepartmentsListResponse, error)
 	mustEmbedUnimplementedDepartmentsProviderServer()
@@ -120,7 +120,7 @@ func (UnimplementedDepartmentsProviderServer) Create(context.Context, *CreateDep
 func (UnimplementedDepartmentsProviderServer) Get(context.Context, *GetDepartmentRequest) (*DepartmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedDepartmentsProviderServer) Update(context.Context, *UpdateDepartmentRequest) (*DepartmentResponse, error) {
+func (UnimplementedDepartmentsProviderServer) Update(context.Context, *DepartmentResponse) (*DepartmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedDepartmentsProviderServer) Delete(context.Context, *DeleteDepartmentRequest) (*DeleteDepartmentResponse, error) {
@@ -187,7 +187,7 @@ func _DepartmentsProvider_Get_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _DepartmentsProvider_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateDepartmentRequest)
+	in := new(DepartmentResponse)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func _DepartmentsProvider_Update_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: DepartmentsProvider_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentsProviderServer).Update(ctx, req.(*UpdateDepartmentRequest))
+		return srv.(DepartmentsProviderServer).Update(ctx, req.(*DepartmentResponse))
 	}
 	return interceptor(ctx, in, info, handler)
 }

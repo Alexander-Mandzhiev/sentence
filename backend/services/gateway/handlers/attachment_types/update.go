@@ -10,7 +10,7 @@ import (
 )
 
 func (h *Handler) update(c *gin.Context) {
-	const op = "attachment_types.Handler.update"
+	const op = "attachmentTypes.Handler.update"
 	log := h.logger.With(slog.String("op", op))
 
 	idStr := c.Param("id")

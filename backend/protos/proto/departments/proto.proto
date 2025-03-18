@@ -3,10 +3,12 @@ syntax = "proto3";
 package departments_provider;
 option go_package = "departments_ppu.v1;departments";
 
+import "google/protobuf/timestamp.proto";
+
 service DepartmentsProvider {
   rpc Create(CreateDepartmentRequest) returns (DepartmentResponse);
   rpc Get(GetDepartmentRequest) returns (DepartmentResponse);
-  rpc Update(UpdateDepartmentRequest) returns (DepartmentResponse);
+  rpc Update(DepartmentResponse) returns (DepartmentResponse);
   rpc Delete(DeleteDepartmentRequest) returns (DeleteDepartmentResponse);
   rpc List(ListDepartmentsRequest) returns (DepartmentsListResponse);
 }
@@ -21,20 +23,13 @@ message GetDepartmentRequest {
   int32 id = 1;
 }
 
-message UpdateDepartmentRequest {
-  int32 id = 1;
-  string name = 2;
-  string description = 3;
-  bool is_active = 4;
-}
-
 message DepartmentResponse {
   int32 id = 1;
   string name = 2;
   string description = 3;
   bool is_active = 4;
-  string created_at = 5;
-  string updated_at = 6;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message DeleteDepartmentRequest {

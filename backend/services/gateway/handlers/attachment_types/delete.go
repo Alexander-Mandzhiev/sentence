@@ -10,7 +10,7 @@ import (
 )
 
 func (h *Handler) delete(c *gin.Context) {
-	const op = "attachment_types.Handler.delete"
+	const op = "attachmentTypes.Handler.delete"
 	log := h.logger.With(slog.String("op", op))
 
 	idStr := c.Param("id")

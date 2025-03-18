@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handler) list(c *gin.Context) {
-	const op = "attachment_types.Handler.list"
+	const op = "attachmentTypes.Handler.list"
 	log := h.logger.With(slog.String("op", op))
 
 	var req attachment_types.ListAttachmentTypesRequest

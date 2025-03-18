@@ -32,7 +32,7 @@ const (
 type AttachmentTypesProviderClient interface {
 	Create(ctx context.Context, in *CreateAttachmentTypeRequest, opts ...grpc.CallOption) (*AttachmentTypeResponse, error)
 	Get(ctx context.Context, in *GetAttachmentTypeRequest, opts ...grpc.CallOption) (*AttachmentTypeResponse, error)
-	Update(ctx context.Context, in *UpdateAttachmentTypeRequest, opts ...grpc.CallOption) (*AttachmentTypeResponse, error)
+	Update(ctx context.Context, in *AttachmentTypeResponse, opts ...grpc.CallOption) (*AttachmentTypeResponse, error)
 	Delete(ctx context.Context, in *DeleteAttachmentTypeRequest, opts ...grpc.CallOption) (*DeleteAttachmentTypeResponse, error)
 	List(ctx context.Context, in *ListAttachmentTypesRequest, opts ...grpc.CallOption) (*AttachmentTypesListResponse, error)
 }
@@ -65,7 +65,7 @@ func (c *attachmentTypesProviderClient) Get(ctx context.Context, in *GetAttachme
 	return out, nil
 }
 
-func (c *attachmentTypesProviderClient) Update(ctx context.Context, in *UpdateAttachmentTypeRequest, opts ...grpc.CallOption) (*AttachmentTypeResponse, error) {
+func (c *attachmentTypesProviderClient) Update(ctx context.Context, in *AttachmentTypeResponse, opts ...grpc.CallOption) (*AttachmentTypeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AttachmentTypeResponse)
 	err := c.cc.Invoke(ctx, AttachmentTypesProvider_Update_FullMethodName, in, out, cOpts...)
@@ -101,7 +101,7 @@ func (c *attachmentTypesProviderClient) List(ctx context.Context, in *ListAttach
 type AttachmentTypesProviderServer interface {
 	Create(context.Context, *CreateAttachmentTypeRequest) (*AttachmentTypeResponse, error)
 	Get(context.Context, *GetAttachmentTypeRequest) (*AttachmentTypeResponse, error)
-	Update(context.Context, *UpdateAttachmentTypeRequest) (*AttachmentTypeResponse, error)
+	Update(context.Context, *AttachmentTypeResponse) (*AttachmentTypeResponse, error)
 	Delete(context.Context, *DeleteAttachmentTypeRequest) (*DeleteAttachmentTypeResponse, error)
 	List(context.Context, *ListAttachmentTypesRequest) (*AttachmentTypesListResponse, error)
 	mustEmbedUnimplementedAttachmentTypesProviderServer()
@@ -120,7 +120,7 @@ func (UnimplementedAttachmentTypesProviderServer) Create(context.Context, *Creat
 func (UnimplementedAttachmentTypesProviderServer) Get(context.Context, *GetAttachmentTypeRequest) (*AttachmentTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedAttachmentTypesProviderServer) Update(context.Context, *UpdateAttachmentTypeRequest) (*AttachmentTypeResponse, error) {
+func (UnimplementedAttachmentTypesProviderServer) Update(context.Context, *AttachmentTypeResponse) (*AttachmentTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedAttachmentTypesProviderServer) Delete(context.Context, *DeleteAttachmentTypeRequest) (*DeleteAttachmentTypeResponse, error) {
@@ -188,7 +188,7 @@ func _AttachmentTypesProvider_Get_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _AttachmentTypesProvider_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateAttachmentTypeRequest)
+	in := new(AttachmentTypeResponse)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -200,7 +200,7 @@ func _AttachmentTypesProvider_Update_Handler(srv interface{}, ctx context.Contex
 		FullMethod: AttachmentTypesProvider_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentTypesProviderServer).Update(ctx, req.(*UpdateAttachmentTypeRequest))
+		return srv.(AttachmentTypesProviderServer).Update(ctx, req.(*AttachmentTypeResponse))
 	}
 	return interceptor(ctx, in, info, handler)
 }

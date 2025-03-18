@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handler) create(c *gin.Context) {
-	const op = "attachment_types.Handler.create"
+	const op = "attachmentTypes.Handler.create"
 	log := h.logger.With(slog.String("op", op))
 
 	var req attachment_types.CreateAttachmentTypeRequest
