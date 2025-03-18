@@ -20,8 +20,8 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	AttachmentsProvider_Create_FullMethodName = "/attachments_provider.AttachmentsProvider/Create"
-	AttachmentsProvider_Get_FullMethodName    = "/attachments_provider.AttachmentsProvider/Get"
 	AttachmentsProvider_Update_FullMethodName = "/attachments_provider.AttachmentsProvider/Update"
+	AttachmentsProvider_Get_FullMethodName    = "/attachments_provider.AttachmentsProvider/Get"
 	AttachmentsProvider_Delete_FullMethodName = "/attachments_provider.AttachmentsProvider/Delete"
 	AttachmentsProvider_List_FullMethodName   = "/attachments_provider.AttachmentsProvider/List"
 )
@@ -31,8 +31,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AttachmentsProviderClient interface {
 	Create(ctx context.Context, in *CreateAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error)
-	Get(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error)
 	Update(ctx context.Context, in *AttachmentResponse, opts ...grpc.CallOption) (*AttachmentResponse, error)
+	Get(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error)
 	Delete(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*DeleteAttachmentResponse, error)
 	List(ctx context.Context, in *ListAttachmentsRequest, opts ...grpc.CallOption) (*AttachmentsListResponse, error)
 }
@@ -55,20 +55,20 @@ func (c *attachmentsProviderClient) Create(ctx context.Context, in *CreateAttach
 	return out, nil
 }
 
-func (c *attachmentsProviderClient) Get(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error) {
+func (c *attachmentsProviderClient) Update(ctx context.Context, in *AttachmentResponse, opts ...grpc.CallOption) (*AttachmentResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AttachmentResponse)
-	err := c.cc.Invoke(ctx, AttachmentsProvider_Get_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AttachmentsProvider_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *attachmentsProviderClient) Update(ctx context.Context, in *AttachmentResponse, opts ...grpc.CallOption) (*AttachmentResponse, error) {
+func (c *attachmentsProviderClient) Get(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AttachmentResponse)
-	err := c.cc.Invoke(ctx, AttachmentsProvider_Update_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AttachmentsProvider_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,8 +100,8 @@ func (c *attachmentsProviderClient) List(ctx context.Context, in *ListAttachment
 // for forward compatibility.
 type AttachmentsProviderServer interface {
 	Create(context.Context, *CreateAttachmentRequest) (*AttachmentResponse, error)
-	Get(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error)
 	Update(context.Context, *AttachmentResponse) (*AttachmentResponse, error)
+	Get(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error)
 	Delete(context.Context, *DeleteAttachmentRequest) (*DeleteAttachmentResponse, error)
 	List(context.Context, *ListAttachmentsRequest) (*AttachmentsListResponse, error)
 	mustEmbedUnimplementedAttachmentsProviderServer()
@@ -117,11 +117,11 @@ type UnimplementedAttachmentsProviderServer struct{}
 func (UnimplementedAttachmentsProviderServer) Create(context.Context, *CreateAttachmentRequest) (*AttachmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedAttachmentsProviderServer) Get(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
-}
 func (UnimplementedAttachmentsProviderServer) Update(context.Context, *AttachmentResponse) (*AttachmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedAttachmentsProviderServer) Get(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedAttachmentsProviderServer) Delete(context.Context, *DeleteAttachmentRequest) (*DeleteAttachmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -168,24 +168,6 @@ func _AttachmentsProvider_Create_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AttachmentsProvider_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAttachmentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AttachmentsProviderServer).Get(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AttachmentsProvider_Get_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentsProviderServer).Get(ctx, req.(*GetAttachmentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AttachmentsProvider_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AttachmentResponse)
 	if err := dec(in); err != nil {
@@ -200,6 +182,24 @@ func _AttachmentsProvider_Update_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AttachmentsProviderServer).Update(ctx, req.(*AttachmentResponse))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttachmentsProvider_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAttachmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttachmentsProviderServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttachmentsProvider_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttachmentsProviderServer).Get(ctx, req.(*GetAttachmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -252,12 +252,12 @@ var AttachmentsProvider_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AttachmentsProvider_Create_Handler,
 		},
 		{
-			MethodName: "Get",
-			Handler:    _AttachmentsProvider_Get_Handler,
-		},
-		{
 			MethodName: "Update",
 			Handler:    _AttachmentsProvider_Update_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _AttachmentsProvider_Get_Handler,
 		},
 		{
 			MethodName: "Delete",

@@ -1,13 +1,13 @@
 package handle
 
 import (
-	"backend/protos/gen/go/attachments"
+	"backend/protos/gen/go/sentences"
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *attachments.ListAttachmentsRequest) (*attachments.AttachmentsListResponse, error) {
+func (s *serverAPI) List(ctx context.Context, request *sentences.ListSentencesRequest) (*sentences.SentencesListResponse, error) {
 	resp, err := s.service.List(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

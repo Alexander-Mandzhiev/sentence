@@ -3,10 +3,12 @@ syntax = "proto3";
 package attachments_provider;
 option go_package = "attachments_ppu.v1;attachments";
 
+import "google/protobuf/timestamp.proto";
+
 service AttachmentsProvider {
   rpc Create(CreateAttachmentRequest) returns (AttachmentResponse);
-  rpc Get(GetAttachmentRequest) returns (AttachmentResponse);
   rpc Update(AttachmentResponse) returns (AttachmentResponse);
+  rpc Get(GetAttachmentRequest) returns (AttachmentResponse);
   rpc Delete(DeleteAttachmentRequest) returns (DeleteAttachmentResponse);
   rpc List(ListAttachmentsRequest) returns (AttachmentsListResponse);
 }
@@ -30,17 +32,19 @@ message AttachmentResponse {
   string file_path = 4;
   string mime_type = 5;
   int64 file_size = 6;
-  string created_at = 7;
+  google.protobuf.Timestamp created_at = 7;
 }
 
 message DeleteAttachmentRequest {
   int32 id = 1;
 }
+
 message DeleteAttachmentResponse {
   bool success = 1;
 }
 
 message ListAttachmentsRequest {}
+
 message AttachmentsListResponse {
   repeated AttachmentResponse data = 1;
 }

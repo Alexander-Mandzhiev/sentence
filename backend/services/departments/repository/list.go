@@ -31,7 +31,6 @@ func (r *Repository) List(ctx context.Context) ([]*departments.DepartmentRespons
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
-		// Преобразуем time.Time в *timestamppb.Timestamp
 		deeps.CreatedAt = timestamppb.New(createdAt)
 		deeps.UpdatedAt = timestamppb.New(updatedAt)
 

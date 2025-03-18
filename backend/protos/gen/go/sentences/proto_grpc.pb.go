@@ -32,7 +32,7 @@ const (
 type SentencesProviderClient interface {
 	Create(ctx context.Context, in *CreateSentenceRequest, opts ...grpc.CallOption) (*SentenceResponse, error)
 	Get(ctx context.Context, in *GetSentenceRequest, opts ...grpc.CallOption) (*SentenceResponse, error)
-	Update(ctx context.Context, in *UpdateSentenceRequest, opts ...grpc.CallOption) (*SentenceResponse, error)
+	Update(ctx context.Context, in *SentenceResponse, opts ...grpc.CallOption) (*SentenceResponse, error)
 	Delete(ctx context.Context, in *DeleteSentenceRequest, opts ...grpc.CallOption) (*DeleteSentenceResponse, error)
 	List(ctx context.Context, in *ListSentencesRequest, opts ...grpc.CallOption) (*SentencesListResponse, error)
 }
@@ -65,7 +65,7 @@ func (c *sentencesProviderClient) Get(ctx context.Context, in *GetSentenceReques
 	return out, nil
 }
 
-func (c *sentencesProviderClient) Update(ctx context.Context, in *UpdateSentenceRequest, opts ...grpc.CallOption) (*SentenceResponse, error) {
+func (c *sentencesProviderClient) Update(ctx context.Context, in *SentenceResponse, opts ...grpc.CallOption) (*SentenceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SentenceResponse)
 	err := c.cc.Invoke(ctx, SentencesProvider_Update_FullMethodName, in, out, cOpts...)
@@ -101,7 +101,7 @@ func (c *sentencesProviderClient) List(ctx context.Context, in *ListSentencesReq
 type SentencesProviderServer interface {
 	Create(context.Context, *CreateSentenceRequest) (*SentenceResponse, error)
 	Get(context.Context, *GetSentenceRequest) (*SentenceResponse, error)
-	Update(context.Context, *UpdateSentenceRequest) (*SentenceResponse, error)
+	Update(context.Context, *SentenceResponse) (*SentenceResponse, error)
 	Delete(context.Context, *DeleteSentenceRequest) (*DeleteSentenceResponse, error)
 	List(context.Context, *ListSentencesRequest) (*SentencesListResponse, error)
 	mustEmbedUnimplementedSentencesProviderServer()
@@ -120,7 +120,7 @@ func (UnimplementedSentencesProviderServer) Create(context.Context, *CreateSente
 func (UnimplementedSentencesProviderServer) Get(context.Context, *GetSentenceRequest) (*SentenceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedSentencesProviderServer) Update(context.Context, *UpdateSentenceRequest) (*SentenceResponse, error) {
+func (UnimplementedSentencesProviderServer) Update(context.Context, *SentenceResponse) (*SentenceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedSentencesProviderServer) Delete(context.Context, *DeleteSentenceRequest) (*DeleteSentenceResponse, error) {
@@ -187,7 +187,7 @@ func _SentencesProvider_Get_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _SentencesProvider_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateSentenceRequest)
+	in := new(SentenceResponse)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func _SentencesProvider_Update_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: SentencesProvider_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SentencesProviderServer).Update(ctx, req.(*UpdateSentenceRequest))
+		return srv.(SentencesProviderServer).Update(ctx, req.(*SentenceResponse))
 	}
 	return interceptor(ctx, in, info, handler)
 }

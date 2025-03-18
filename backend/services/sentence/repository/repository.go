@@ -7,9 +7,7 @@ import (
 	"log/slog"
 )
 
-var (
-	ErrAttachmentNotFound = errors.New("attachment not found")
-)
+var ErrSentenceNotFound = errors.New("sentence not found")
 
 type Repository struct {
 	db     *pgxpool.Pool
@@ -17,11 +15,10 @@ type Repository struct {
 }
 
 func New(db *pgxpool.Pool, logger *slog.Logger) (*Repository, error) {
-	op := "repository.New"
 	if db == nil {
-		logger.Error("Database connection is nil", slog.String("op", op))
+		logger.Error("Database connection is nil", slog.String("op", "repository.New"))
 		return nil, fmt.Errorf("database connection is nil")
 	}
-	logger.Info("Repository initialized", slog.String("op", op))
+	logger.Info("Repository initialized", slog.String("op", "repository.New"))
 	return &Repository{db: db, logger: logger}, nil
 }
