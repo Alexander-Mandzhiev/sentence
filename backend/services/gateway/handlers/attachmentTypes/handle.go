@@ -1,4 +1,4 @@
-package attachment_types_handle
+package attachment_types
 
 import (
 	"backend/protos/gen/go/attachment_types"
@@ -10,7 +10,7 @@ import (
 type AttachmentTypesService interface {
 	Create(ctx context.Context, req *attachment_types.CreateAttachmentTypeRequest) (*attachment_types.AttachmentTypeResponse, error)
 	Get(ctx context.Context, req *attachment_types.GetAttachmentTypeRequest) (*attachment_types.AttachmentTypeResponse, error)
-	Update(ctx context.Context, req *attachment_types.UpdateAttachmentTypeRequest) (*attachment_types.AttachmentTypeResponse, error)
+	Update(ctx context.Context, req *attachment_types.AttachmentTypeResponse) (*attachment_types.AttachmentTypeResponse, error)
 	Delete(ctx context.Context, req *attachment_types.DeleteAttachmentTypeRequest) (*attachment_types.DeleteAttachmentTypeResponse, error)
 	List(ctx context.Context, req *attachment_types.ListAttachmentTypesRequest) (*attachment_types.AttachmentTypesListResponse, error)
 }

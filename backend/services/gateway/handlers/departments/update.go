@@ -21,7 +21,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	var req departments.UpdateDepartmentRequest
+	var req departments.DepartmentResponse
 	if err = c.ShouldBindJSON(&req); err != nil {
 		log.Error("Failed to bind JSON", slog.Any("error", err))
 		c.JSON(http.StatusBadRequest, respond.ErrorResponse("invalid request body"))

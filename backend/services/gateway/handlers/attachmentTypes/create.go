@@ -1,4 +1,4 @@
-package attachment_types_handle
+package attachment_types
 
 import (
 	"backend/pkg/server/respond"

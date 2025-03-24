@@ -3,6 +3,8 @@ syntax = "proto3";
 package history_provider;
 option go_package = "history_ppu.v1;history";
 
+import "google/protobuf/timestamp.proto";
+
 service HistoryProvider {
   rpc Create(CreateHistoryRequest) returns (HistoryResponse);
   rpc Get(GetHistoryRequest) returns (HistoryResponse);
@@ -23,7 +25,7 @@ message HistoryResponse {
   int32 id = 1;                // ID записи в истории
   int64 sentence_id = 2;       // ID предложения
   int32 status_id = 3;         // ID статуса
-  string created_at = 4;       // Дата создания (формат ISO 8601)
+  google.protobuf.Timestamp created_at = 4;       // Дата создания
   string reason = 5;           // Причина изменения
   string details = 6;          // Дополнительные детали
 }

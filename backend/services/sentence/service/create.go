@@ -3,12 +3,19 @@ package service
 import (
 	"backend/protos/gen/go/sentences"
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
 func (s *Service) Create(ctx context.Context, req *sentences.CreateSentenceRequest) (*sentences.SentenceResponse, error) {
 	op := "service.Create"
 	s.logger.Info("Creating sentence", slog.String("op", op), slog.Any("request", req))
+
+	if req == nil || req.StatusId <= 0 || req.Name == "" || req.DirectionId <= 0 || req.PriorityId <= 0 {
+		s.logger.Error("Invalid input data", slog.String("op", op), slog.Any("request", req))
+		return nil, status.Error(codes.InvalidArgument, "invalid input data")
+	}
 
 	sentence := &sentences.SentenceResponse{
 		StatusId:      req.StatusId,

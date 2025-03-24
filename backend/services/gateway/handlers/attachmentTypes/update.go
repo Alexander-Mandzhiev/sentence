@@ -1,4 +1,4 @@
-package attachment_types_handle
+package attachment_types
 
 import (
 	"backend/pkg/server/respond"
@@ -9,8 +9,8 @@ import (
 	"strconv"
 )
 
-func (h *Handler) delete(c *gin.Context) {
-	const op = "attachmentTypes.Handler.delete"
+func (h *Handler) update(c *gin.Context) {
+	const op = "attachmentTypes.Handler.update"
 	log := h.logger.With(slog.String("op", op))
 
 	idStr := c.Param("id")
@@ -21,13 +21,21 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.service.Delete(c.Request.Context(), &attachment_types.DeleteAttachmentTypeRequest{Id: int32(id)})
+	var req attachment_types.AttachmentTypeResponse
+	if err = c.ShouldBindJSON(&req); err != nil {
+		log.Error("Failed to bind JSON", slog.Any("error", err))
+		c.JSON(http.StatusBadRequest, respond.ErrorResponse("invalid request body"))
+		return
+	}
+
+	req.Id = int32(id)
+	resp, err := h.service.Update(c.Request.Context(), &req)
 	if err != nil {
-		log.Error("Failed to delete attachment type", slog.Any("error", err))
+		log.Error("Failed to update attachment type", slog.Any("error", err))
 		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("internal server error"))
 		return
 	}
 
-	log.Info("Attachment type deleted successfully", slog.Any("response", resp))
+	log.Info("Attachment type updated successfully", slog.Any("response", resp))
 	c.JSON(http.StatusOK, respond.SuccessResponse(resp))
 }

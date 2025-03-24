@@ -2,89 +2,78 @@ package handlers
 
 import (
 	sl "backend/pkg/logger"
-	"backend/services/gateway/handlers/attachment"
-	"backend/services/gateway/handlers/attachment_types"
-	"backend/services/gateway/handlers/departments"
-	"backend/services/gateway/handlers/directions"
-	"backend/services/gateway/handlers/history"
-	"backend/services/gateway/handlers/implementors"
-	"backend/services/gateway/handlers/priorities"
-	"backend/services/gateway/handlers/sentence_attachment"
-	"backend/services/gateway/handlers/sentences"
-	"backend/services/gateway/handlers/statuses"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/cors"
 	"log/slog"
 	"net/http"
 )
 
+type RouteInitializer interface {
+	InitRoutes(router *gin.RouterGroup)
+}
+
 type ServerAPI struct {
-	logger                      *slog.Logger
-	attachmentTypesHandler      *attachment_types_handle.Handler
-	directionsHandler           *directions_handle.Handler
-	historyHandler              *history_handle.Handler
-	attachmentsHandler          *attachment_handle.Handler
-	departmentsHandler          *departments_handle.Handler
-	implementorsHandler         *implementors_handle.Handler
-	prioritiesHandler           *priorities_handle.Handler
-	statusesHandler             *statuses_handle.Handler
-	sentencesHandler            *sentences_handle.Handler
-	sentencesAttachmentsHandler *sentence_attachment_handle.Handler
+	router *gin.Engine
+	logger *slog.Logger
 }
 
-func New(
-	logger *slog.Logger,
-	attachmentTypesHandler *attachment_types_handle.Handler,
-	directionsHandler *directions_handle.Handler,
-	historyHandler *history_handle.Handler,
-	attachmentsHandler *attachment_handle.Handler,
-	departmentsHandler *departments_handle.Handler,
-	implementorsHandler *implementors_handle.Handler,
-	prioritiesHandler *priorities_handle.Handler,
-	statusesHandler *statuses_handle.Handler,
-	sentencesHandler *sentences_handle.Handler,
-	sentencesAttachmentsHandler *sentence_attachment_handle.Handler,
-) *ServerAPI {
+func New(logger *slog.Logger) *ServerAPI {
+	router := gin.New()
+	router.Use(
+		gin.LoggerWithConfig(gin.LoggerConfig{
+			Output: sl.NewLoggerWriter(logger, slog.LevelInfo),
+			Formatter: func(params gin.LogFormatterParams) string {
+				sl.LogGinRequest(logger, params, slog.LevelInfo)
+				return ""
+			},
+		}),
+		gin.Recovery(),
+	)
+
 	return &ServerAPI{
-		logger:                      logger,
-		attachmentTypesHandler:      attachmentTypesHandler,
-		directionsHandler:           directionsHandler,
-		historyHandler:              historyHandler,
-		attachmentsHandler:          attachmentsHandler,
-		departmentsHandler:          departmentsHandler,
-		implementorsHandler:         implementorsHandler,
-		prioritiesHandler:           prioritiesHandler,
-		statusesHandler:             statusesHandler,
-		sentencesHandler:            sentencesHandler,
-		sentencesAttachmentsHandler: sentencesAttachmentsHandler,
+		router: router,
+		logger: logger,
 	}
 }
 
-func (h *ServerAPI) InitRouters() http.Handler {
-	router := gin.Default()
-	router.Use(gin.LoggerWithConfig(gin.LoggerConfig{
-		Output: sl.NewLoggerWriter(h.logger, slog.LevelInfo),
-	}))
-	router.Use(gin.Recovery())
-
-	api := router.Group("/api/v1")
+func (s *ServerAPI) RegisterHandlers(handlers ...RouteInitializer) {
+	apiGroup := s.router.Group("/api/v1")
 	{
-		h.attachmentTypesHandler.InitRoutes(api)
-		h.directionsHandler.InitRoutes(api)
-		h.historyHandler.InitRoutes(api)
-		h.attachmentsHandler.InitRoutes(api)
-		h.departmentsHandler.InitRoutes(api)
-		h.implementorsHandler.InitRoutes(api)
-		h.prioritiesHandler.InitRoutes(api)
-		h.statusesHandler.InitRoutes(api)
-		h.sentencesHandler.InitRoutes(api)
-		h.sentencesAttachmentsHandler.InitRoutes(api)
+		for _, handler := range handlers {
+			handler.InitRoutes(apiGroup)
+		}
 	}
-
-	router.GET("/healthcheck", h.healthcheck)
-
-	return router
+	s.router.GET("/healthcheck", s.healthCheck)
 }
 
-func (h *ServerAPI) healthcheck(c *gin.Context) {
+func (s *ServerAPI) healthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+func (s *ServerAPI) GetHTTPHandler() http.Handler {
+	return s.router
+}
+
+func (s *ServerAPI) EnableCORS() {
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	})
+
+	s.router.Use(func(c *gin.Context) {
+		corsHandler.HandlerFunc(c.Writer, c.Request)
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+		c.Next()
+	})
+}
+
+func (s *ServerAPI) AddMiddleware(middleware ...gin.HandlerFunc) {
+	for _, m := range middleware {
+		s.router.Use(m)
+	}
 }

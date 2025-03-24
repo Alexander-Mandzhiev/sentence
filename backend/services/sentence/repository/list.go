@@ -13,8 +13,8 @@ func (r *Repository) List(ctx context.Context) ([]*sentences.SentenceResponse, e
 	op := "repository.List"
 	r.logger.Info("Listing sentences", slog.String("op", op))
 
-	query := `SELECT id, status_id, name, phone, department_id, problem, solution, 
-               created_at, direction_id, implementor_id, priority_id, encouragement FROM sentences`
+	query := `SELECT id, status_id, name, phone, department_id, problem, solution, created_at, direction_id, implementor_id, priority_id, encouragement 
+		FROM sentences`
 
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {
@@ -25,12 +25,15 @@ func (r *Repository) List(ctx context.Context) ([]*sentences.SentenceResponse, e
 
 	var sentencesList []*sentences.SentenceResponse
 	for rows.Next() {
-		var sentence sentences.SentenceResponse
-		var createdAt time.Time
-
-		err = rows.Scan(&sentence.Id, &sentence.StatusId, &sentence.Name, &sentence.Phone, &sentence.DepartmentId, &sentence.Problem,
-			&sentence.Solution, &createdAt, &sentence.DirectionId, &sentence.ImplementorId, &sentence.PriorityId, &sentence.Encouragement)
-		if err != nil {
+		var (
+			sentence  sentences.SentenceResponse
+			createdAt time.Time
+		)
+		if err = rows.Scan(
+			&sentence.Id, &sentence.StatusId, &sentence.Name, &sentence.Phone, &sentence.DepartmentId,
+			&sentence.Problem, &sentence.Solution, &createdAt, &sentence.DirectionId, &sentence.ImplementorId,
+			&sentence.PriorityId, &sentence.Encouragement,
+		); err != nil {
 			r.logger.Error("Failed to scan sentence", slog.String("op", op), slog.String("error", err.Error()))
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -40,7 +43,7 @@ func (r *Repository) List(ctx context.Context) ([]*sentences.SentenceResponse, e
 	}
 
 	if err = rows.Err(); err != nil {
-		r.logger.Error("Error iterating over rows", slog.String("op", op), slog.String("error", err.Error()))
+		r.logger.Error("Error iterating over sentences", slog.String("op", op), slog.String("error", err.Error()))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 

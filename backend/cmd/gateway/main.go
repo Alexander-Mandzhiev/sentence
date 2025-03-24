@@ -7,17 +7,7 @@ import (
 	"backend/services/gateway/clientFactory"
 	"backend/services/gateway/config"
 	"backend/services/gateway/handlers"
-	"backend/services/gateway/handlers/attachment"
-	"backend/services/gateway/handlers/attachment_types"
-	"backend/services/gateway/handlers/departments"
-	"backend/services/gateway/handlers/directions"
-	"backend/services/gateway/handlers/history"
-	"backend/services/gateway/handlers/implementors"
-	"backend/services/gateway/handlers/priorities"
-	"backend/services/gateway/handlers/sentence_attachment"
-	"backend/services/gateway/handlers/sentences"
-	"backend/services/gateway/handlers/statuses"
-	"backend/services/gateway/serivce"
+	service "backend/services/gateway/serivce"
 	"golang.org/x/net/context"
 	"log/slog"
 	"os"
@@ -35,52 +25,18 @@ func main() {
 	logger.Info("Starting service direction", slog.String("address", cfg.HTTPServer.Address), slog.Int("port", cfg.HTTPServer.Port))
 	logger.Debug("Debug messages are enabled")
 
-	// Инициализация фабрики клиентов
-	clientFactory := client_factory.NewClientFactory(grpc_client.NewGRPCClientManager())
+	// Создание менеджера GRPC соединений
+	grpcManager := grpc_client.NewGRPCClientManager(logger)
 
-	// Создание клиентов для всех микросервисов
-	clients, err := client_factory.CreateClients(clientFactory, cfg.Services.AttachmentTypesAddr, []client_factory.ServiceType{
-		client_factory.ServiceTypeAttachmentTypes,
-		client_factory.ServiceTypeDirections,
-		client_factory.ServiceTypeHistory,
-		client_factory.ServiceTypeAttachments,
-		client_factory.ServiceTypeDepartments,
-		client_factory.ServiceTypeImplementors,
-		client_factory.ServiceTypePriorities,
-		client_factory.ServiceTypeStatuses,
-		client_factory.ServiceTypeSentences,
-		client_factory.ServiceTypeSentencesAttachments,
-	}, logger)
-	if err != nil {
-		logger.Error("Failed to create clients", sl.Err(err))
-		return
-	}
+	// Инициализация фабрики клиентов с кэшированием
+	clientFactory := client_factory.NewClientFactory(grpcManager, logger)
 
 	// Создание сервисного слоя
-	svc := serivce.New(
-		clients[client_factory.ServiceTypeAttachmentTypes].(client_factory.AttachmentTypesClient),
-		clients[client_factory.ServiceTypeDirections].(client_factory.DirectionsClient),
-		clients[client_factory.ServiceTypeHistory].(client_factory.HistoryClient),
-		clients[client_factory.ServiceTypeAttachments].(client_factory.AttachmentsClient),
-		clients[client_factory.ServiceTypeDepartments].(client_factory.DepartmentsClient),
-		clients[client_factory.ServiceTypeImplementors].(client_factory.ImplementorsClient),
-		clients[client_factory.ServiceTypePriorities].(client_factory.PrioritiesClient),
-		clients[client_factory.ServiceTypeStatuses].(client_factory.StatusesClient),
-		clients[client_factory.ServiceTypeSentences].(client_factory.SentencesClient),
-		clients[client_factory.ServiceTypeSentencesAttachments].(client_factory.SentencesAttachmentsClient),
-	)
-
-	// Создание хэндлеров
-	attachmentTypesHandler := attachment_types_handle.New(svc.AttachmentTypesClient, logger)
-	directionsHandler := directions_handle.New(svc.DirectionsClient, logger)
-	historyHandler := history_handle.New(svc.HistoryClient, logger)
-	attachmentsHandler := attachment_handle.New(svc.AttachmentsClient, logger)
-	departmentsHandler := departments_handle.New(svc.DepartmentsClient, logger)
-	implementorsHandler := implementors_handle.New(svc.ImplementorsClient, logger)
-	prioritiesHandler := priorities_handle.New(svc.PrioritiesClient, logger)
-	statusesHandler := statuses_handle.New(svc.StatusesClient, logger)
-	sentencesHandler := sentences_handle.New(svc.SentencesClient, logger)
-	sentencesAttachmentsHandler := sentence_attachment_handle.New(svc.SentencesAttachmentsClient, logger)
+	svc, err := service.New(clientFactory, cfg.Services, logger)
+	if err != nil {
+		logger.Error("failed to initialize services", sl.Err(err))
+		os.Exit(1)
+	}
 
 	// Создание ServerAPI
 	serverAPI := handlers.New(
