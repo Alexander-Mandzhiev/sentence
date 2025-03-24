@@ -12,7 +12,8 @@ import (
 func (r *Repository) List(ctx context.Context) ([]*attachments.AttachmentResponse, error) {
 	op := "repository.List"
 	r.logger.Info("Listing attachments", slog.String("op", op))
-	query := `SELECT id, attachment_type_id, file_name, file_path, mime_type, file_size, created_at	FROM attachments`
+
+	query := `SELECT id, attachment_type_id, file_name, file_path, mime_type, file_size, created_at FROM attachments`
 
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {

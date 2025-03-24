@@ -9,6 +9,12 @@ import (
 func (r *Repository) Delete(ctx context.Context, id int32) error {
 	op := "repository.Delete"
 	r.logger.Info("Deleting attachment", slog.String("op", op), slog.Int64("id", int64(id)))
+
+	if id <= 0 {
+		r.logger.Error("Invalid attachment ID", slog.String("op", op), slog.Int64("id", int64(id)))
+		return fmt.Errorf("%s: invalid attachment ID", op)
+	}
+
 	query := `DELETE FROM attachments WHERE id = $1`
 
 	result, err := r.db.Exec(ctx, query, id)

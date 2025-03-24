@@ -13,8 +13,12 @@ func (r *Repository) Create(ctx context.Context, attachment *attachments.Attachm
 	op := "repository.Create"
 	r.logger.Info("Creating attachment", slog.String("op", op), slog.Any("attachment", attachment))
 
-	query := `INSERT INTO attachments (attachment_type_id, file_name, file_path, mime_type, file_size, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6)	RETURNING id, created_at`
+	if attachment == nil || attachment.FileName == "" || attachment.FilePath == "" || attachment.AttachmentTypeId <= 0 {
+		r.logger.Error("Invalid input data", slog.String("op", op), slog.Any("attachment", attachment))
+		return nil, fmt.Errorf("%s: invalid input data", op)
+	}
+
+	query := `INSERT INTO attachments (attachment_type_id, file_name, file_path, mime_type, file_size, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, created_at`
 
 	var (
 		id        int32

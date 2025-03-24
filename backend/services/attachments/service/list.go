@@ -16,6 +16,11 @@ func (s *Service) List(ctx context.Context) (*attachments.AttachmentsListRespons
 		return nil, err
 	}
 
+	if len(attachmentsList) == 0 {
+		s.logger.Info("No attachments found", slog.String("op", op))
+		return &attachments.AttachmentsListResponse{Data: []*attachments.AttachmentResponse{}}, nil
+	}
+
 	s.logger.Info("Attachments listed", slog.String("op", op), slog.Int("count", len(attachmentsList)))
 	return &attachments.AttachmentsListResponse{Data: attachmentsList}, nil
 }

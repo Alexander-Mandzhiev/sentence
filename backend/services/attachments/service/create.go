@@ -3,6 +3,8 @@ package service
 import (
 	"backend/protos/gen/go/attachments"
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log/slog"
 	"time"
@@ -11,6 +13,11 @@ import (
 func (s *Service) Create(ctx context.Context, req *attachments.CreateAttachmentRequest) (*attachments.AttachmentResponse, error) {
 	op := "service.Create"
 	s.logger.Info("Creating attachment", slog.String("op", op), slog.Any("request", req))
+
+	if req == nil || req.FileName == "" || req.FilePath == "" || req.AttachmentTypeId <= 0 {
+		s.logger.Error("Invalid input data", slog.String("op", op), slog.Any("request", req))
+		return nil, status.Error(codes.InvalidArgument, "invalid input data: request is nil or required fields are empty/invalid")
+	}
 
 	attachment := &attachments.AttachmentResponse{
 		AttachmentTypeId: req.AttachmentTypeId,

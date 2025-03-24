@@ -11,7 +11,12 @@ func (r *Repository) Update(ctx context.Context, attachment *attachments.Attachm
 	op := "repository.Update"
 	r.logger.Info("Updating attachment", slog.String("op", op), slog.Any("attachment", attachment))
 
-	query := `UPDATE attachments SET attachment_type_id = $1, file_name = $2, file_path = $3, mime_type = $4, file_size = $5	WHERE id = $6`
+	if attachment == nil || attachment.Id <= 0 || attachment.FileName == "" || attachment.FilePath == "" || attachment.AttachmentTypeId <= 0 {
+		r.logger.Error("Invalid input data", slog.String("op", op), slog.Any("attachment", attachment))
+		return fmt.Errorf("%s: invalid input data", op)
+	}
+
+	query := `UPDATE attachments SET attachment_type_id = $1, file_name = $2, file_path = $3, mime_type = $4, file_size = $5 WHERE id = $6`
 
 	result, err := r.db.Exec(ctx, query, attachment.AttachmentTypeId, attachment.FileName, attachment.FilePath, attachment.MimeType, attachment.FileSize, attachment.Id)
 	if err != nil {

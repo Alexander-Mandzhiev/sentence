@@ -14,14 +14,20 @@ import (
 func (r *Repository) Get(ctx context.Context, id int32) (*attachments.AttachmentResponse, error) {
 	op := "repository.Get"
 	r.logger.Info("Getting attachment", slog.String("op", op), slog.Int64("id", int64(id)))
-	query := `SELECT id, attachment_type_id, file_name, file_path, mime_type, file_size, created_at	FROM attachments WHERE id = $1`
+
+	if id <= 0 {
+		r.logger.Error("Invalid attachment ID", slog.String("op", op), slog.Int64("id", int64(id)))
+		return nil, fmt.Errorf("%s: invalid attachment ID", op)
+	}
+
+	query := `SELECT id, attachment_type_id, file_name, file_path, mime_type, file_size, created_at FROM attachments WHERE id = $1`
 
 	var (
 		att       attachments.AttachmentResponse
 		createdAt time.Time
 	)
 
-	err := r.db.QueryRow(ctx, query, id).Scan(&id, &att.AttachmentTypeId, &att.FileName, &att.FilePath, &att.MimeType, &att.FileSize, &createdAt)
+	err := r.db.QueryRow(ctx, query, id).Scan(&att.Id, &att.AttachmentTypeId, &att.FileName, &att.FilePath, &att.MimeType, &att.FileSize, &createdAt)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			r.logger.Error("Attachment not found", slog.String("op", op), slog.Int64("id", int64(id)))
