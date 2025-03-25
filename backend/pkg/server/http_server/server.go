@@ -43,7 +43,7 @@ func (s *APIServer) Start(frontendAddr string, httpServerCfg cfg.HTTPServer) err
 		AllowedHeaders:   []string{"Content-Type", "Authorization", "X-Requested-With", "X-API-Key", "X-Csrf-Token"},
 	})
 
-	handlerWithCORS := c.Handler(s.gateway.InitRouters())
+	handlerWithCORS := c.Handler(s.gateway.GetHTTPHandler())
 
 	s.httpserver = &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", httpServerCfg.Address, httpServerCfg.Port),

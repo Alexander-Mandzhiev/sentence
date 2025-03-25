@@ -9,7 +9,7 @@ import (
 func (s *Service) Create(ctx context.Context, req *history.CreateHistoryRequest) (*history.HistoryResponse, error) {
 	const op = "historyes_service.Create"
 	log := s.logger.With(slog.String("op", op))
-	log.Debug("creating history record", "sentence_id", req.SentenceId, "action", req.Action, "user_id", req.UserId)
+	log.Debug("creating history record", "sentence_id", req.SentenceId)
 
 	resp, err := s.client.Create(ctx, req)
 	if err != nil {

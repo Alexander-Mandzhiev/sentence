@@ -1,4 +1,4 @@
-package attachment_types
+package attachment_types_handle
 
 import (
 	"backend/protos/gen/go/attachment_types"
