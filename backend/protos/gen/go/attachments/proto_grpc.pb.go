@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,22 +20,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AttachmentsProvider_Create_FullMethodName = "/attachments_provider.AttachmentsProvider/Create"
-	AttachmentsProvider_Update_FullMethodName = "/attachments_provider.AttachmentsProvider/Update"
-	AttachmentsProvider_Get_FullMethodName    = "/attachments_provider.AttachmentsProvider/Get"
-	AttachmentsProvider_Delete_FullMethodName = "/attachments_provider.AttachmentsProvider/Delete"
-	AttachmentsProvider_List_FullMethodName   = "/attachments_provider.AttachmentsProvider/List"
+	AttachmentsProvider_CreateAttachment_FullMethodName = "/attachments_provider.AttachmentsProvider/CreateAttachment"
+	AttachmentsProvider_GetAttachment_FullMethodName    = "/attachments_provider.AttachmentsProvider/GetAttachment"
+	AttachmentsProvider_DeleteAttachment_FullMethodName = "/attachments_provider.AttachmentsProvider/DeleteAttachment"
+	AttachmentsProvider_ListAttachments_FullMethodName  = "/attachments_provider.AttachmentsProvider/ListAttachments"
+	AttachmentsProvider_DownloadFile_FullMethodName     = "/attachments_provider.AttachmentsProvider/DownloadFile"
 )
 
 // AttachmentsProviderClient is the client API for AttachmentsProvider service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AttachmentsProviderClient interface {
-	Create(ctx context.Context, in *CreateAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error)
-	Update(ctx context.Context, in *AttachmentResponse, opts ...grpc.CallOption) (*AttachmentResponse, error)
-	Get(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error)
-	Delete(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*DeleteAttachmentResponse, error)
-	List(ctx context.Context, in *ListAttachmentsRequest, opts ...grpc.CallOption) (*AttachmentsListResponse, error)
+	CreateAttachment(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateAttachmentRequest, AttachmentResponse], error)
+	GetAttachment(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error)
+	DeleteAttachment(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListAttachments(ctx context.Context, in *ListAttachmentsRequest, opts ...grpc.CallOption) (*AttachmentsListResponse, error)
+	DownloadFile(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadFileResponse], error)
 }
 
 type attachmentsProviderClient struct {
@@ -45,65 +46,77 @@ func NewAttachmentsProviderClient(cc grpc.ClientConnInterface) AttachmentsProvid
 	return &attachmentsProviderClient{cc}
 }
 
-func (c *attachmentsProviderClient) Create(ctx context.Context, in *CreateAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error) {
+func (c *attachmentsProviderClient) CreateAttachment(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateAttachmentRequest, AttachmentResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &AttachmentsProvider_ServiceDesc.Streams[0], AttachmentsProvider_CreateAttachment_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[CreateAttachmentRequest, AttachmentResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AttachmentsProvider_CreateAttachmentClient = grpc.ClientStreamingClient[CreateAttachmentRequest, AttachmentResponse]
+
+func (c *attachmentsProviderClient) GetAttachment(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AttachmentResponse)
-	err := c.cc.Invoke(ctx, AttachmentsProvider_Create_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AttachmentsProvider_GetAttachment_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *attachmentsProviderClient) Update(ctx context.Context, in *AttachmentResponse, opts ...grpc.CallOption) (*AttachmentResponse, error) {
+func (c *attachmentsProviderClient) DeleteAttachment(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AttachmentResponse)
-	err := c.cc.Invoke(ctx, AttachmentsProvider_Update_FullMethodName, in, out, cOpts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AttachmentsProvider_DeleteAttachment_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *attachmentsProviderClient) Get(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (*AttachmentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AttachmentResponse)
-	err := c.cc.Invoke(ctx, AttachmentsProvider_Get_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *attachmentsProviderClient) Delete(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*DeleteAttachmentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteAttachmentResponse)
-	err := c.cc.Invoke(ctx, AttachmentsProvider_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *attachmentsProviderClient) List(ctx context.Context, in *ListAttachmentsRequest, opts ...grpc.CallOption) (*AttachmentsListResponse, error) {
+func (c *attachmentsProviderClient) ListAttachments(ctx context.Context, in *ListAttachmentsRequest, opts ...grpc.CallOption) (*AttachmentsListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AttachmentsListResponse)
-	err := c.cc.Invoke(ctx, AttachmentsProvider_List_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AttachmentsProvider_ListAttachments_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
+
+func (c *attachmentsProviderClient) DownloadFile(ctx context.Context, in *GetAttachmentRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &AttachmentsProvider_ServiceDesc.Streams[1], AttachmentsProvider_DownloadFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[GetAttachmentRequest, DownloadFileResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AttachmentsProvider_DownloadFileClient = grpc.ServerStreamingClient[DownloadFileResponse]
 
 // AttachmentsProviderServer is the server API for AttachmentsProvider service.
 // All implementations must embed UnimplementedAttachmentsProviderServer
 // for forward compatibility.
 type AttachmentsProviderServer interface {
-	Create(context.Context, *CreateAttachmentRequest) (*AttachmentResponse, error)
-	Update(context.Context, *AttachmentResponse) (*AttachmentResponse, error)
-	Get(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error)
-	Delete(context.Context, *DeleteAttachmentRequest) (*DeleteAttachmentResponse, error)
-	List(context.Context, *ListAttachmentsRequest) (*AttachmentsListResponse, error)
+	CreateAttachment(grpc.ClientStreamingServer[CreateAttachmentRequest, AttachmentResponse]) error
+	GetAttachment(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error)
+	DeleteAttachment(context.Context, *DeleteAttachmentRequest) (*emptypb.Empty, error)
+	ListAttachments(context.Context, *ListAttachmentsRequest) (*AttachmentsListResponse, error)
+	DownloadFile(*GetAttachmentRequest, grpc.ServerStreamingServer[DownloadFileResponse]) error
 	mustEmbedUnimplementedAttachmentsProviderServer()
 }
 
@@ -114,20 +127,20 @@ type AttachmentsProviderServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAttachmentsProviderServer struct{}
 
-func (UnimplementedAttachmentsProviderServer) Create(context.Context, *CreateAttachmentRequest) (*AttachmentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedAttachmentsProviderServer) CreateAttachment(grpc.ClientStreamingServer[CreateAttachmentRequest, AttachmentResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method CreateAttachment not implemented")
 }
-func (UnimplementedAttachmentsProviderServer) Update(context.Context, *AttachmentResponse) (*AttachmentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedAttachmentsProviderServer) GetAttachment(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAttachment not implemented")
 }
-func (UnimplementedAttachmentsProviderServer) Get(context.Context, *GetAttachmentRequest) (*AttachmentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+func (UnimplementedAttachmentsProviderServer) DeleteAttachment(context.Context, *DeleteAttachmentRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAttachment not implemented")
 }
-func (UnimplementedAttachmentsProviderServer) Delete(context.Context, *DeleteAttachmentRequest) (*DeleteAttachmentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedAttachmentsProviderServer) ListAttachments(context.Context, *ListAttachmentsRequest) (*AttachmentsListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAttachments not implemented")
 }
-func (UnimplementedAttachmentsProviderServer) List(context.Context, *ListAttachmentsRequest) (*AttachmentsListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+func (UnimplementedAttachmentsProviderServer) DownloadFile(*GetAttachmentRequest, grpc.ServerStreamingServer[DownloadFileResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method DownloadFile not implemented")
 }
 func (UnimplementedAttachmentsProviderServer) mustEmbedUnimplementedAttachmentsProviderServer() {}
 func (UnimplementedAttachmentsProviderServer) testEmbeddedByValue()                             {}
@@ -150,95 +163,77 @@ func RegisterAttachmentsProviderServer(s grpc.ServiceRegistrar, srv AttachmentsP
 	s.RegisterService(&AttachmentsProvider_ServiceDesc, srv)
 }
 
-func _AttachmentsProvider_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateAttachmentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AttachmentsProviderServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AttachmentsProvider_Create_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentsProviderServer).Create(ctx, req.(*CreateAttachmentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+func _AttachmentsProvider_CreateAttachment_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(AttachmentsProviderServer).CreateAttachment(&grpc.GenericServerStream[CreateAttachmentRequest, AttachmentResponse]{ServerStream: stream})
 }
 
-func _AttachmentsProvider_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AttachmentResponse)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AttachmentsProviderServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AttachmentsProvider_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentsProviderServer).Update(ctx, req.(*AttachmentResponse))
-	}
-	return interceptor(ctx, in, info, handler)
-}
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AttachmentsProvider_CreateAttachmentServer = grpc.ClientStreamingServer[CreateAttachmentRequest, AttachmentResponse]
 
-func _AttachmentsProvider_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AttachmentsProvider_GetAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAttachmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AttachmentsProviderServer).Get(ctx, in)
+		return srv.(AttachmentsProviderServer).GetAttachment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AttachmentsProvider_Get_FullMethodName,
+		FullMethod: AttachmentsProvider_GetAttachment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentsProviderServer).Get(ctx, req.(*GetAttachmentRequest))
+		return srv.(AttachmentsProviderServer).GetAttachment(ctx, req.(*GetAttachmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AttachmentsProvider_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AttachmentsProvider_DeleteAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteAttachmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AttachmentsProviderServer).Delete(ctx, in)
+		return srv.(AttachmentsProviderServer).DeleteAttachment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AttachmentsProvider_Delete_FullMethodName,
+		FullMethod: AttachmentsProvider_DeleteAttachment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentsProviderServer).Delete(ctx, req.(*DeleteAttachmentRequest))
+		return srv.(AttachmentsProviderServer).DeleteAttachment(ctx, req.(*DeleteAttachmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AttachmentsProvider_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AttachmentsProvider_ListAttachments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAttachmentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AttachmentsProviderServer).List(ctx, in)
+		return srv.(AttachmentsProviderServer).ListAttachments(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AttachmentsProvider_List_FullMethodName,
+		FullMethod: AttachmentsProvider_ListAttachments_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentsProviderServer).List(ctx, req.(*ListAttachmentsRequest))
+		return srv.(AttachmentsProviderServer).ListAttachments(ctx, req.(*ListAttachmentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
+
+func _AttachmentsProvider_DownloadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetAttachmentRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AttachmentsProviderServer).DownloadFile(m, &grpc.GenericServerStream[GetAttachmentRequest, DownloadFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AttachmentsProvider_DownloadFileServer = grpc.ServerStreamingServer[DownloadFileResponse]
 
 // AttachmentsProvider_ServiceDesc is the grpc.ServiceDesc for AttachmentsProvider service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -248,26 +243,29 @@ var AttachmentsProvider_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AttachmentsProviderServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _AttachmentsProvider_Create_Handler,
+			MethodName: "GetAttachment",
+			Handler:    _AttachmentsProvider_GetAttachment_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _AttachmentsProvider_Update_Handler,
+			MethodName: "DeleteAttachment",
+			Handler:    _AttachmentsProvider_DeleteAttachment_Handler,
 		},
 		{
-			MethodName: "Get",
-			Handler:    _AttachmentsProvider_Get_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _AttachmentsProvider_Delete_Handler,
-		},
-		{
-			MethodName: "List",
-			Handler:    _AttachmentsProvider_List_Handler,
+			MethodName: "ListAttachments",
+			Handler:    _AttachmentsProvider_ListAttachments_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "CreateAttachment",
+			Handler:       _AttachmentsProvider_CreateAttachment_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "DownloadFile",
+			Handler:       _AttachmentsProvider_DownloadFile_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "attachments/proto.proto",
 }

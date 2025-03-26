@@ -6,26 +6,35 @@ import (
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
+	"strconv"
 )
 
 func (h *Handler) create(c *gin.Context) {
 	const op = "attachments.Handler.create"
 	log := h.logger.With(slog.String("op", op))
 
-	var req attachments.CreateAttachmentRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		log.Error("Failed to bind JSON", slog.Any("error", err))
-		c.JSON(http.StatusBadRequest, respond.ErrorResponse("invalid request body"))
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		log.Error("Failed to get file from form", slog.String("error", err.Error()))
+		c.JSON(http.StatusBadRequest, respond.ErrorResponse("file is required"))
 		return
 	}
+	defer file.Close()
 
-	resp, err := h.service.Create(c.Request.Context(), &req)
+	attachmentTypeID, _ := strconv.Atoi(c.PostForm("attachment_type_id"))
+	metadata := &attachments.AttachmentMetadata{
+		AttachmentTypeId: int32(attachmentTypeID),
+		FileName:         header.Filename,
+		MimeType:         header.Header.Get("Content-Type"),
+	}
+
+	resp, err := h.service.CreateAttachment(c.Request.Context(), metadata, file)
 	if err != nil {
-		log.Error("Failed to create attachment", slog.Any("error", err))
-		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("internal server error"))
+		log.Error("Failed to create attachment", slog.String("error", err.Error()))
+		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("failed to create attachment"))
 		return
 	}
 
 	log.Info("Attachment created successfully", slog.Any("response", resp))
-	c.JSON(http.StatusOK, respond.SuccessResponse(resp))
+	c.JSON(http.StatusCreated, respond.SuccessResponse(resp))
 }

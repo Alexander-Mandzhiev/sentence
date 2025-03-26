@@ -4,14 +4,15 @@ import (
 	"backend/protos/gen/go/attachments"
 	"context"
 	"google.golang.org/grpc"
+	"io"
 )
 
 type AttachmentsService interface {
-	Create(ctx context.Context, req *attachments.CreateAttachmentRequest) (*attachments.AttachmentResponse, error)
-	Update(ctx context.Context, req *attachments.AttachmentResponse) (*attachments.AttachmentResponse, error)
-	Get(ctx context.Context, req *attachments.GetAttachmentRequest) (*attachments.AttachmentResponse, error)
-	Delete(ctx context.Context, req *attachments.DeleteAttachmentRequest) (*attachments.DeleteAttachmentResponse, error)
-	List(ctx context.Context) (*attachments.AttachmentsListResponse, error)
+	CreateAttachment(ctx context.Context, metadata *attachments.AttachmentMetadata, file io.Reader) (*attachments.AttachmentResponse, error)
+	GetAttachment(ctx context.Context, id int32) (*attachments.AttachmentResponse, error)
+	DeleteAttachment(ctx context.Context, id int32) error
+	ListAttachments(ctx context.Context, limit, offset int32) ([]*attachments.AttachmentResponse, error)
+	DownloadFile(ctx context.Context, id int32) (io.ReadCloser, *attachments.FileMetadata, error)
 }
 
 type serverAPI struct {

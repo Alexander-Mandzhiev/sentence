@@ -11,11 +11,11 @@ import (
 
 func (r *Repository) ListBySentence(ctx context.Context, req *history.ListBySentenceRequest) (*history.HistoryListResponse, error) {
 	const op = "repository.HistoryRepository.ListBySentence"
-	query := `SELECT id, sentence_id, status_id, created_at, reason, details FROM histories WHERE sentence_id = $1 ORDER BY created_at DESC`
+	query := `SELECT id, sentence_id, status_id, created_at, reason, details FROM history WHERE sentence_id = $1 ORDER BY created_at DESC`
 	rows, err := r.db.Query(ctx, query, req.SentenceId)
 
 	if err != nil {
-		r.logger.Error("failed to list histories by sentence", slog.String("op", op), slog.String("error", err.Error()))
+		r.logger.Error("failed to list history records by sentence", slog.String("op", op), slog.Int64("sentence_id", req.SentenceId), slog.String("error", err.Error()))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()

@@ -13,11 +13,12 @@ type RouteInitializer interface {
 }
 
 type ServerAPI struct {
-	router *gin.Engine
-	logger *slog.Logger
+	router   *gin.Engine
+	logger   *slog.Logger
+	mediaDir string
 }
 
-func New(logger *slog.Logger) *ServerAPI {
+func New(logger *slog.Logger, mediaDir string) *ServerAPI {
 	router := gin.New()
 	router.Use(
 		gin.LoggerWithConfig(gin.LoggerConfig{
@@ -29,10 +30,14 @@ func New(logger *slog.Logger) *ServerAPI {
 		}),
 		gin.Recovery(),
 	)
+	if mediaDir != "" {
+		router.Static("/media", mediaDir)
+	}
 
 	return &ServerAPI{
-		router: router,
-		logger: logger,
+		router:   router,
+		logger:   logger,
+		mediaDir: mediaDir,
 	}
 }
 

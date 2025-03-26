@@ -10,12 +10,18 @@ import (
 )
 
 func (r *Repository) Create(ctx context.Context, attachment *attachments.AttachmentResponse) (*attachments.AttachmentResponse, error) {
-	op := "repository.Create"
-	r.logger.Info("Creating attachment", slog.String("op", op), slog.Any("attachment", attachment))
-
+	const op = "repository.Create"
+	logger := r.logger.With(slog.String("op", op))
 	if attachment == nil || attachment.FileName == "" || attachment.FilePath == "" || attachment.AttachmentTypeId <= 0 {
-		r.logger.Error("Invalid input data", slog.String("op", op), slog.Any("attachment", attachment))
 		return nil, fmt.Errorf("%s: invalid input data", op)
+	}
+
+	exists, err := r.checkFilePathExists(ctx, attachment.FilePath)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	if exists {
+		return nil, fmt.Errorf("%s: file path already exists", op)
 	}
 
 	query := `INSERT INTO attachments (attachment_type_id, file_name, file_path, mime_type, file_size, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, created_at`
@@ -25,15 +31,15 @@ func (r *Repository) Create(ctx context.Context, attachment *attachments.Attachm
 		createdAt time.Time
 	)
 
-	err := r.db.QueryRow(ctx, query, attachment.AttachmentTypeId, attachment.FileName, attachment.FilePath, attachment.MimeType, attachment.FileSize, attachment.CreatedAt.AsTime()).Scan(&id, &createdAt)
+	err = r.db.QueryRow(ctx, query, attachment.AttachmentTypeId, attachment.FileName, attachment.FilePath, attachment.MimeType, attachment.FileSize, time.Now()).Scan(&id, &createdAt)
+
 	if err != nil {
-		r.logger.Error("Failed to create attachment", slog.String("op", op), slog.String("error", err.Error()))
+		logger.Error("failed to create attachment", slog.String("error", err.Error()))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	attachment.Id = id
 	attachment.CreatedAt = timestamppb.New(createdAt)
 
-	r.logger.Info("Attachment created", slog.String("op", op), slog.Any("attachment", attachment))
 	return attachment, nil
 }

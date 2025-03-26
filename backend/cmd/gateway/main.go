@@ -136,7 +136,7 @@ func main() {
 	statusesSvc := statuses_service.New(statusesClient, logger)
 
 	// Инициализация HTTP сервера
-	serverAPI := handlers.New(logger)
+	serverAPI := handlers.New(logger, "/app/media")
 	serverAPI.RegisterHandlers(
 		attachment_handle.New(attachmentSvc, logger),
 		attachment_types_handle.New(attachmentTypesSvc, logger),

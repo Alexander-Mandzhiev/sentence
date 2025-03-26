@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-var ErrHistoriesNotFound = errors.New("priorities not found")
+var ErrHistoriesNotFound = errors.New("history records not found")
 
 type Repository struct {
 	db     *pgxpool.Pool

@@ -42,7 +42,7 @@ func main() {
 	}
 
 	// Инициализация сервиса
-	srv := service.New(repo, logger, "media")
+	srv := service.New(repo, logger, "/app/media")
 
 	// Инициализация gRPC сервера
 	app := grpc_server.New()

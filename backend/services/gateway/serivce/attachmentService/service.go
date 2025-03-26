@@ -3,15 +3,17 @@ package attachment_service
 import (
 	"backend/protos/gen/go/attachments"
 	"context"
+	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
 
 type AttachmentsClient interface {
-	Create(ctx context.Context, req *attachments.CreateAttachmentRequest) (*attachments.AttachmentResponse, error)
-	Get(ctx context.Context, req *attachments.GetAttachmentRequest) (*attachments.AttachmentResponse, error)
-	Update(ctx context.Context, req *attachments.AttachmentResponse) (*attachments.AttachmentResponse, error)
-	Delete(ctx context.Context, req *attachments.DeleteAttachmentRequest) (*attachments.DeleteAttachmentResponse, error)
-	List(ctx context.Context, req *attachments.ListAttachmentsRequest) (*attachments.AttachmentsListResponse, error)
+	CreateAttachment(ctx context.Context, opts ...grpc.CallOption) (attachments.AttachmentsProvider_CreateAttachmentClient, error)
+	GetAttachment(ctx context.Context, in *attachments.GetAttachmentRequest, opts ...grpc.CallOption) (*attachments.AttachmentResponse, error)
+	DeleteAttachment(ctx context.Context, in *attachments.DeleteAttachmentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListAttachments(ctx context.Context, in *attachments.ListAttachmentsRequest, opts ...grpc.CallOption) (*attachments.AttachmentsListResponse, error)
+	DownloadFile(ctx context.Context, in *attachments.GetAttachmentRequest, opts ...grpc.CallOption) (attachments.AttachmentsProvider_DownloadFileClient, error)
 }
 type Service struct {
 	client attachments.AttachmentsProviderClient

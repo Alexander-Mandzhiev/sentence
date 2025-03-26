@@ -4,25 +4,27 @@ package attachments_provider;
 option go_package = "attachments_ppu.v1;attachments";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 service AttachmentsProvider {
-  rpc Create(CreateAttachmentRequest) returns (AttachmentResponse);
-  rpc Update(AttachmentResponse) returns (AttachmentResponse);
-  rpc Get(GetAttachmentRequest) returns (AttachmentResponse);
-  rpc Delete(DeleteAttachmentRequest) returns (DeleteAttachmentResponse);
-  rpc List(ListAttachmentsRequest) returns (AttachmentsListResponse);
+  rpc CreateAttachment(stream CreateAttachmentRequest) returns (AttachmentResponse);
+  rpc GetAttachment(GetAttachmentRequest) returns (AttachmentResponse);
+  rpc DeleteAttachment(DeleteAttachmentRequest) returns (google.protobuf.Empty);
+  rpc ListAttachments(ListAttachmentsRequest) returns (AttachmentsListResponse);
+  rpc DownloadFile(GetAttachmentRequest) returns (stream DownloadFileResponse);
 }
 
 message CreateAttachmentRequest {
-  int32 attachment_type_id = 1;
-  string file_name = 2;
-  string file_path = 3;
-  string mime_type = 4;
-  int64 file_size = 5;
+  oneof data {
+    AttachmentMetadata metadata = 1;
+    bytes chunk = 2;
+  }
 }
 
-message GetAttachmentRequest {
-  int32 id = 1;
+message AttachmentMetadata {
+  int32 attachment_type_id = 1;
+  string file_name = 2;
+  string mime_type = 3;
 }
 
 message AttachmentResponse {
@@ -35,16 +37,31 @@ message AttachmentResponse {
   google.protobuf.Timestamp created_at = 7;
 }
 
-message DeleteAttachmentRequest {
+message GetAttachmentRequest {
   int32 id = 1;
 }
 
-message DeleteAttachmentResponse {
-  bool success = 1;
+message DeleteAttachmentRequest {
+  int32 id = 1;
 }
-
-message ListAttachmentsRequest {}
+message ListAttachmentsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
 
 message AttachmentsListResponse {
   repeated AttachmentResponse data = 1;
+}
+
+message DownloadFileResponse {
+  oneof data {
+    FileMetadata metadata = 1;
+    bytes chunk = 2;
+  }
+}
+
+message FileMetadata {
+  string file_name = 1;
+  string mime_type = 2;
+  int64 file_size = 3;
 }

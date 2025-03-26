@@ -2,7 +2,6 @@ package attachment_handle
 
 import (
 	"backend/pkg/server/respond"
-	"backend/protos/gen/go/attachments"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -16,18 +15,18 @@ func (h *Handler) get(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		log.Error("Failed to convert ID to integer", slog.String("id", idStr), slog.Any("error", err))
-		c.JSON(http.StatusBadRequest, respond.ErrorResponse("invalid ID format: ID must be an integer"))
+		log.Error("Invalid attachment ID", slog.String("id", idStr), slog.String("error", err.Error()))
+		c.JSON(http.StatusBadRequest, respond.ErrorResponse("invalid attachment ID"))
 		return
 	}
 
-	resp, err := h.service.Get(c.Request.Context(), &attachments.GetAttachmentRequest{Id: int32(id)})
+	attachment, err := h.service.GetAttachment(c.Request.Context(), int32(id))
 	if err != nil {
-		log.Error("Failed to get attachment", slog.Any("error", err))
-		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("internal server error"))
+		log.Error("Failed to get attachment", slog.String("error", err.Error()))
+		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("failed to get attachment"))
 		return
 	}
 
-	log.Info("Attachment retrieved successfully", slog.Any("response", resp))
-	c.JSON(http.StatusOK, respond.SuccessResponse(resp))
+	log.Info("Attachment retrieved successfully")
+	c.JSON(http.StatusOK, respond.SuccessResponse(attachment))
 }
