@@ -2,6 +2,7 @@ package attachment_handle
 
 import (
 	"backend/protos/gen/go/attachments"
+	"backend/services/gateway/models"
 	"context"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -9,10 +10,10 @@ import (
 )
 
 type AttachmentsService interface {
-	CreateAttachment(ctx context.Context, metadata *attachments.AttachmentMetadata, file io.Reader) (*attachments.AttachmentResponse, error)
-	GetAttachment(ctx context.Context, id int32) (*attachments.AttachmentResponse, error)
-	DeleteAttachment(ctx context.Context, id int32) error
-	ListAttachments(ctx context.Context, limit, offset int32) (*attachments.AttachmentsListResponse, error)
+	Create(ctx context.Context, metadata *attachments.AttachmentMetadata, file io.Reader) (*models.Attachment, error)
+	Get(ctx context.Context, id int32) (*models.Attachment, error)
+	Delete(ctx context.Context, id int32) error
+	List(ctx context.Context, limit, offset int32) ([]*models.Attachment, error)
 	DownloadFile(ctx context.Context, id int32) (io.ReadCloser, *attachments.FileMetadata, error)
 }
 

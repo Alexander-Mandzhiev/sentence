@@ -9,17 +9,40 @@ import (
 	"time"
 )
 
-func (r *Repository) List(ctx context.Context) ([]*sentences.SentenceResponse, error) {
-	op := "repository.List"
-	r.logger.Info("Listing sentences", slog.String("op", op))
+func (r *Repository) List(ctx context.Context, limit, offset int32) ([]*sentences.SentenceResponse, int32, error) {
+	const op = "repository.List"
+	log := r.logger.With(slog.String("op", op))
 
-	query := `SELECT id, status_id, name, phone, department_id, problem, solution, created_at, direction_id, implementor_id, priority_id, encouragement 
-		FROM sentences`
+	// Проверка параметров пагинации
+	if limit < 0 || offset < 0 {
+		log.Error("некорректные параметры пагинации",
+			slog.Int("limit", int(limit)),
+			slog.Int("offset", int(offset)),
+		)
+		return nil, 0, fmt.Errorf("%w: некорректные параметры пагинации", ErrInvalidInput)
+	}
 
-	rows, err := r.db.Query(ctx, query)
+	if limit == 0 {
+		limit = 50
+	}
+
+	var totalCount int32
+	countQuery := `SELECT COUNT(*) FROM sentences`
+	err := r.db.QueryRow(ctx, countQuery).Scan(&totalCount)
 	if err != nil {
-		r.logger.Error("Failed to list sentences", slog.String("op", op), slog.String("error", err.Error()))
-		return nil, fmt.Errorf("%s: %w", op, err)
+		log.Error("ошибка при получении общего количества предложений", "error", err)
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	query := `SELECT id, status_id, name, phone, department_id, problem, 
+        solution, created_at, direction_id, implementor_id, priority_id, encouragement
+        FROM sentences
+        LIMIT $1 OFFSET $2`
+
+	rows, err := r.db.Query(ctx, query, limit, offset)
+	if err != nil {
+		log.Error("ошибка при получении списка предложений", "error", err)
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
 
@@ -30,23 +53,26 @@ func (r *Repository) List(ctx context.Context) ([]*sentences.SentenceResponse, e
 			createdAt time.Time
 		)
 		if err = rows.Scan(
-			&sentence.Id, &sentence.StatusId, &sentence.Name, &sentence.Phone, &sentence.DepartmentId,
-			&sentence.Problem, &sentence.Solution, &createdAt, &sentence.DirectionId, &sentence.ImplementorId,
-			&sentence.PriorityId, &sentence.Encouragement,
+			&sentence.Id, &sentence.StatusId, &sentence.Name, &sentence.Phone,
+			&sentence.DepartmentId, &sentence.Problem, &sentence.Solution, &createdAt,
+			&sentence.DirectionId, &sentence.ImplementorId, &sentence.PriorityId,
+			&sentence.Encouragement,
 		); err != nil {
-			r.logger.Error("Failed to scan sentence", slog.String("op", op), slog.String("error", err.Error()))
-			return nil, fmt.Errorf("%s: %w", op, err)
+			log.Error("ошибка при сканировании предложения", "error", err)
+			return nil, 0, fmt.Errorf("%s: %w", op, err)
 		}
-
 		sentence.CreatedAt = timestamppb.New(createdAt)
 		sentencesList = append(sentencesList, &sentence)
 	}
 
 	if err = rows.Err(); err != nil {
-		r.logger.Error("Error iterating over sentences", slog.String("op", op), slog.String("error", err.Error()))
-		return nil, fmt.Errorf("%s: %w", op, err)
+		log.Error("ошибка при обработке результатов", "error", err)
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	r.logger.Info("Sentences listed", slog.String("op", op), slog.Int("count", len(sentencesList)))
-	return sentencesList, nil
+	log.Debug("список предложений получен",
+		"count", len(sentencesList),
+		"total", totalCount,
+	)
+	return sentencesList, totalCount, nil
 }

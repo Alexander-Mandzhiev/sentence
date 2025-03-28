@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *Service) DeleteAttachment(ctx context.Context, id int32) error {
+func (s *Service) Delete(ctx context.Context, id int32) error {
 	const op = "attachment_service.DeleteAttachment"
 	log := s.logger.With(slog.String("op", op), slog.Int("id", int(id)))
 	if id <= 0 {

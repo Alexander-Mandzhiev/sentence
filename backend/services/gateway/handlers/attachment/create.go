@@ -28,13 +28,13 @@ func (h *Handler) create(c *gin.Context) {
 		MimeType:         header.Header.Get("Content-Type"),
 	}
 
-	resp, err := h.service.CreateAttachment(c.Request.Context(), metadata, file)
+	attachment, err := h.service.Create(c.Request.Context(), metadata, file)
 	if err != nil {
 		log.Error("Failed to create attachment", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("failed to create attachment"))
 		return
 	}
 
-	log.Info("Attachment created successfully", slog.Any("response", resp))
-	c.JSON(http.StatusCreated, respond.SuccessResponse(resp))
+	log.Info("Attachment created successfully", slog.Any("attachment", attachment))
+	c.JSON(http.StatusCreated, respond.SuccessResponse(attachment))
 }

@@ -2,7 +2,6 @@ package sentences_handle
 
 import (
 	"backend/pkg/server/respond"
-	"backend/protos/gen/go/sentences"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -14,20 +13,19 @@ func (h *Handler) delete(c *gin.Context) {
 	log := h.logger.With(slog.String("op", op))
 
 	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		log.Error("Failed to convert ID to integer", slog.String("id", idStr), slog.Any("error", err))
 		c.JSON(http.StatusBadRequest, respond.ErrorResponse("invalid ID format: ID must be an integer"))
 		return
 	}
 
-	resp, err := h.service.Delete(c.Request.Context(), &sentences.DeleteSentenceRequest{Id: int64(id)})
-	if err != nil {
+	if err = h.service.Delete(c.Request.Context(), id); err != nil {
 		log.Error("Failed to delete sentence", slog.Any("error", err))
 		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("internal server error"))
 		return
 	}
 
-	log.Info("Sentence deleted successfully", slog.Any("response", resp))
-	c.JSON(http.StatusOK, respond.SuccessResponse(resp))
+	log.Info("Sentence deleted successfully", slog.Int64("id", id))
+	c.JSON(http.StatusNoContent, gin.H{"success": true})
 }

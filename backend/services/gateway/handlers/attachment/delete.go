@@ -20,7 +20,7 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	err = h.service.DeleteAttachment(c.Request.Context(), int32(id))
+	err = h.service.Delete(c.Request.Context(), int32(id))
 	if err != nil {
 		log.Error("Failed to delete attachment", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("failed to delete attachment"))
@@ -28,5 +28,5 @@ func (h *Handler) delete(c *gin.Context) {
 	}
 
 	log.Info("Attachment deleted successfully")
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusNoContent, gin.H{"success": true})
 }

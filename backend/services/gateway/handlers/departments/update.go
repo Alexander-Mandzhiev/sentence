@@ -3,6 +3,7 @@ package departments_handle
 import (
 	"backend/pkg/server/respond"
 	"backend/protos/gen/go/departments"
+	"backend/services/gateway/models"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -36,6 +37,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	log.Info("Department updated successfully", slog.Any("response", resp))
-	c.JSON(http.StatusOK, respond.SuccessResponse(resp))
+	department := models.DepartmentFromProto(resp)
+	log.Info("Department updated successfully", slog.Any("response", department))
+	c.JSON(http.StatusOK, respond.SuccessResponse(department))
 }

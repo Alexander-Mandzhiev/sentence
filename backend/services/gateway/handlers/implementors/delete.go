@@ -29,5 +29,5 @@ func (h *Handler) delete(c *gin.Context) {
 	}
 
 	log.Info("Implementor deleted successfully", slog.Any("response", resp))
-	c.JSON(http.StatusOK, respond.SuccessResponse(resp))
+	c.JSON(http.StatusOK, resp)
 }

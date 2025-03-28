@@ -20,7 +20,7 @@ func (h *Handler) get(c *gin.Context) {
 		return
 	}
 
-	attachment, err := h.service.GetAttachment(c.Request.Context(), int32(id))
+	attachment, err := h.service.Get(c.Request.Context(), int32(id))
 	if err != nil {
 		log.Error("Failed to get attachment", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("failed to get attachment"))

@@ -3,6 +3,7 @@ package departments_handle
 import (
 	"backend/pkg/server/respond"
 	"backend/protos/gen/go/departments"
+	"backend/services/gateway/models"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -19,6 +20,11 @@ func (h *Handler) list(c *gin.Context) {
 		return
 	}
 
-	log.Info("Departments listed successfully", slog.Any("response", resp))
-	c.JSON(http.StatusOK, respond.SuccessResponse(resp))
+	deps := make([]*models.Department, 0, len(resp.Data))
+	for _, pbDept := range resp.Data {
+		deps = append(deps, models.DepartmentFromProto(pbDept))
+	}
+
+	log.Info("Departments listed successfully", slog.Any("response", deps))
+	c.JSON(http.StatusOK, respond.SuccessResponse(deps))
 }

@@ -48,7 +48,7 @@ func (s *APIServer) Start(frontendAddr string, httpServerCfg cfg.HTTPServer) err
 	s.httpserver = &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", httpServerCfg.Address, httpServerCfg.Port),
 		Handler:        handlerWithCORS,
-		MaxHeaderBytes: 1 << 20, // 1 MB
+		MaxHeaderBytes: 1 << 20,
 		ReadTimeout:    httpServerCfg.Timeout,
 		WriteTimeout:   httpServerCfg.Timeout,
 		IdleTimeout:    httpServerCfg.IdleTimeout,

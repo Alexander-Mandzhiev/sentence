@@ -124,16 +124,19 @@ func main() {
 	}
 
 	// Инициализация сервисов
-	attachmentSvc := attachment_service.New(attachmentsClient, logger)
 	attachmentTypesSvc := attachment_types_service.New(attachmentTypesClient, logger)
+	attachmentSvc := attachment_service.New(attachmentsClient, attachmentTypesSvc, logger)
+
 	departmentSvc := departments_service.New(departmentsClient, logger)
 	directionSvc := direction_service.New(directionsClient, logger)
 	historySvc := historyes_service.New(historyClient, logger)
 	implementorSvc := implementors_service.New(implementorsClient, logger)
 	prioritySvc := priorities_service.New(prioritiesClient, logger)
 	sentencesAttachmentsSvc := sentences_attachments_service.New(sentencesAttachmentsClient, logger)
-	sentencesSvc := sentences_service.New(sentencesClient, logger)
 	statusesSvc := statuses_service.New(statusesClient, logger)
+
+	sentencesSvc := sentences_service.New(sentencesClient, statusesSvc, directionSvc, prioritySvc, departmentSvc,
+		implementorSvc, attachmentSvc, attachmentTypesSvc, historySvc, sentencesAttachmentsSvc, logger)
 
 	// Инициализация HTTP сервера
 	serverAPI := handlers.New(logger, "/app/media")

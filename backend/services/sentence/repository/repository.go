@@ -7,7 +7,10 @@ import (
 	"log/slog"
 )
 
-var ErrSentenceNotFound = errors.New("sentence not found")
+var (
+	ErrSentenceNotFound = errors.New("предложение не найдено")
+	ErrInvalidInput     = errors.New("некорректные входные данные")
+)
 
 type Repository struct {
 	db     *pgxpool.Pool

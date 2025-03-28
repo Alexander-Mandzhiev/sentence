@@ -25,7 +25,7 @@ func (h *Handler) list(c *gin.Context) {
 		offset = 0
 	}
 
-	resp, err := h.service.ListAttachments(c.Request.Context(), int32(limit), int32(offset))
+	resp, err := h.service.List(c.Request.Context(), int32(limit), int32(offset))
 	if err != nil {
 		log.Error("Failed to list attachments", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, respond.ErrorResponse("failed to list attachments"))

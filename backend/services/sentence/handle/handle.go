@@ -9,9 +9,9 @@ import (
 type SentencesService interface {
 	Create(ctx context.Context, request *sentences.CreateSentenceRequest) (*sentences.SentenceResponse, error)
 	Get(ctx context.Context, request *sentences.GetSentenceRequest) (*sentences.SentenceResponse, error)
-	Update(ctx context.Context, attachment *sentences.SentenceResponse) (*sentences.SentenceResponse, error)
+	Update(ctx context.Context, request *sentences.SentenceResponse) (*sentences.SentenceResponse, error)
 	Delete(ctx context.Context, request *sentences.DeleteSentenceRequest) (*sentences.DeleteSentenceResponse, error)
-	List(ctx context.Context) (*sentences.SentencesListResponse, error)
+	List(ctx context.Context, limit, offset int32) (*sentences.SentencesListResponse, error)
 }
 
 type serverAPI struct {

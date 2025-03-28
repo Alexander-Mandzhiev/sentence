@@ -1,19 +1,20 @@
 package sentences_handle
 
 import (
-	"backend/protos/gen/go/sentences"
+	"backend/services/gateway/models"
 	"context"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 )
 
 type SentenceService interface {
-	Create(ctx context.Context, req *sentences.CreateSentenceRequest) (*sentences.SentenceResponse, error)
-	Get(ctx context.Context, req *sentences.GetSentenceRequest) (*sentences.SentenceResponse, error)
-	Update(ctx context.Context, req *sentences.SentenceResponse) (*sentences.SentenceResponse, error)
-	Delete(ctx context.Context, req *sentences.DeleteSentenceRequest) (*sentences.DeleteSentenceResponse, error)
-	List(ctx context.Context, req *sentences.ListSentencesRequest) (*sentences.SentencesListResponse, error)
+	Create(ctx context.Context, req *models.CreateSentenceRequest) (*models.EnrichedSentence, error)
+	Get(ctx context.Context, id int64) (*models.EnrichedSentence, error)
+	Update(ctx context.Context, req *models.UpdateSentenceRequest) (*models.EnrichedSentence, error)
+	Delete(ctx context.Context, id int64) error
+	List(ctx context.Context, limit, offset int32) ([]*models.EnrichedSentence, int32, error)
 }
+
 type Handler struct {
 	logger  *slog.Logger
 	service SentenceService
@@ -24,12 +25,12 @@ func New(service SentenceService, logger *slog.Logger) *Handler {
 }
 
 func (h *Handler) InitRoutes(router *gin.RouterGroup) {
-	sentences := router.Group("/sentences")
+	sent := router.Group("/sentences")
 	{
-		sentences.POST("/", h.create)
-		sentences.GET("/:id", h.get)
-		sentences.PUT("/:id", h.update)
-		sentences.DELETE("/:id", h.delete)
-		sentences.GET("/", h.list)
+		sent.POST("/", h.create)
+		sent.GET("/:id", h.get)
+		sent.PUT("/:id", h.update)
+		sent.DELETE("/:id", h.delete)
+		sent.GET("/", h.list)
 	}
 }
