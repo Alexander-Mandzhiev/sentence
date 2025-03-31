@@ -9,16 +9,3 @@ INSERT INTO directions (name, description, is_active) VALUES
     ('Рост доходов', 'Направление связано с увеличением доходов.', TRUE),
     ('Другое', 'Прочие направления, не вошедшие в основные категории.', TRUE);
 -- +goose StatementEnd
-
--- +goose Down
--- +goose StatementBegin
-DELETE FROM directions WHERE name IN (
-    'Безопасность',
-    'Защита ресурсов и информации',
-    'Скорость выполнения работ',
-    'Качество выполнения работ',
-    'Очищение затрат',
-    'Рост доходов',
-    'Другое'
-    );
--- +goose StatementEnd

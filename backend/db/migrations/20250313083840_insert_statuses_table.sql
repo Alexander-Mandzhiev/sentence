@@ -8,15 +8,3 @@ INSERT INTO statuses (name, description) VALUES
     ('Отклонить', 'Предложение отклонено.'),
     ('Выплачено', 'Компенсация или вознаграждение выплачено.');
 -- +goose StatementEnd
-
--- +goose Down
--- +goose StatementBegin
-DELETE FROM statuses WHERE name IN (
-    'Новый',
-    'На рассмотрении',
-    'На доработке',
-    'Внедрять',
-    'Отклонить',
-    'Выплачено'
-    );
--- +goose StatementEnd
